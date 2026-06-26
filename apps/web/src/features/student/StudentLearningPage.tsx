@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import type { EnrollmentProgress } from '@ribbon/shared';
-import { api } from '../../lib/api.js';
-import { Button, Card, PageHeading, ProgressBar } from '../../components/ui.js';
+import { api } from '@/lib/api.js';
+import { Button, Card, PageHeading, ProgressBar } from '@/components/ui.js';
 
 export function StudentLearningPage() {
   const { data: enrollments, isLoading } = useQuery({

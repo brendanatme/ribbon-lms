@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Course, EnrollmentProgress } from '@ribbon/shared';
-import { api, ApiError } from '../../lib/api.js';
-import { Button, Card, PageHeading } from '../../components/ui.js';
+import { api, ApiError } from '@/lib/api.js';
+import { Button, Card, PageHeading } from '@/components/ui.js';
 
 type CatalogCourse = Course & { enrollmentCount: number };
 

@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Course, CreateCourseInput } from '@ribbon/shared';
-import { api } from '../../lib/api.js';
-import { Badge, Button, Card, PageHeading } from '../../components/ui.js';
+import { api } from '@/lib/api.js';
+import { Badge, Button, Card, PageHeading } from '@/components/ui.js';
 
 export function TeacherCoursesPage() {
   const queryClient = useQueryClient();

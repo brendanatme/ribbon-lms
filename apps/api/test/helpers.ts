@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { AppModule } from '../src/app.module.js';
-import { AllExceptionsFilter } from '../src/common/filters/all-exceptions.filter.js';
-import { PrismaService } from '../src/prisma/prisma.service.js';
+import { AppModule } from '@/app.module.js';
+import { AllExceptionsFilter } from '@/common/filters/all-exceptions.filter.js';
+import { PrismaService } from '@/prisma/prisma.service.js';
 
 export interface TestApp {
   app: INestApplication;

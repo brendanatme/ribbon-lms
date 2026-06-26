@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { CourseAnalytics } from '@ribbon/shared';
-import { api } from '../../lib/api.js';
-import { Card, PageHeading } from '../../components/ui.js';
+import { api } from '@/lib/api.js';
+import { Card, PageHeading } from '@/components/ui.js';
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (

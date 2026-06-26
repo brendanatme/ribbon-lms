@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import type { CourseAnalytics } from '@ribbon/shared';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '@/prisma/prisma.service.js';
 
 @Injectable()
 export class AnalyticsService {

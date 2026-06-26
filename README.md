@@ -15,7 +15,7 @@ Signup is free; no payment is required.
 | Backend | NestJS, Prisma, PostgreSQL, JWT (Passport), argon2 |
 | Frontend | React, Vite, TanStack Query, React Router, Tailwind, Recharts |
 | Shared | Zod schemas + types consumed by both ends |
-| Tooling | pnpm workspaces, Vitest, TypeScript (strict), ESLint, Prettier, Husky |
+| Tooling | pnpm workspaces, Vitest, TypeScript (strict), SWC (API build), ESLint, Prettier, Husky |
 
 ## Layout
 
@@ -109,6 +109,7 @@ before committing.
 - **Validation is shared.** Zod schemas in `packages/shared` validate requests on the backend (via a `ZodValidationPipe`) and are reused as types on the frontend, eliminating drift.
 - **Errors have a consistent shape.** A global exception filter returns `{ statusCode, message, code, issues }`.
 - **Progress** is computed from `LessonProgress` rows against the total lesson count per course.
+- **Intra-app imports use the `@/*` alias** (→ each app's `src/*`) rather than deep relative paths. The web app resolves it via `vite-tsconfig-paths`; the API resolves it via SWC (`.swcrc`), which rewrites the alias to relative paths at build time. See `CLAUDE.md` for the per-resolver wiring.
 
 ## API surface
 

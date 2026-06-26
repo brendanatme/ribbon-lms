@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
-import { ProgressBar, Badge } from '../components/ui.js';
+import { ProgressBar, Badge } from '@/components/ui.js';
 
 describe('UI primitives', () => {
   it('renders a progress bar with the right aria value', () => {

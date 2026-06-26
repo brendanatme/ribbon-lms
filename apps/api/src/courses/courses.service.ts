@@ -8,7 +8,7 @@ import type {
   UpdateCourseInput,
 } from '@ribbon/shared';
 import type { Course as PrismaCourse } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '@/prisma/prisma.service.js';
 
 @Injectable()
 export class CoursesService {

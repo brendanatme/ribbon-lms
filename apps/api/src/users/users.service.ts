@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import type { ListUsersQuery, PaginatedUsers, Role, UserStatus } from '@ribbon/shared';
 import type { Prisma, User } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { paginated, toSkipTake } from '../common/pagination.js';
+import { PrismaService } from '@/prisma/prisma.service.js';
+import { paginated, toSkipTake } from '@/common/pagination.js';
 
 @Injectable()
 export class UsersService {

@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { ROLE_HOME_PATH } from '@ribbon/shared';
-import { useAuth } from '../lib/auth.js';
+import { useAuth } from '@/lib/auth.js';
 
 export function RootRedirect() {
   const { user, loading } = useAuth();

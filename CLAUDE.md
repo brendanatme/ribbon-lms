@@ -29,6 +29,14 @@ pnpm db:seed                             # optional: demo accounts + sample cour
   `Module '"@prisma/client"' has no exported member 'User'` and cascading into
   implicit-`any` errors in the service layer.
 
+- **The API is built with the SWC builder, not plain `tsc`.** `nest-cli.json`
+  sets `"builder": "swc"`, and `apps/api/.swcrc` holds the transform config
+  (CommonJS output, es2021, `legacyDecorator` + `decoratorMetadata` for NestJS
+  DI). SWC is also what rewrites the `@/*` path alias to relative paths in the
+  emitted JS — see [Path aliases](#path-aliases). `"typeCheck": true` keeps
+  `nest build` running a real `tsc` type-check pass alongside SWC, so build-time
+  type errors are still surfaced.
+
 ## Running
 
 ```bash
@@ -37,6 +45,35 @@ pnpm --filter @ribbon/api dev      # http://localhost:3001/api
 pnpm --filter @ribbon/web dev      # http://localhost:5174 (proxies /api → 3001)
 pnpm build                         # pnpm -r build: shared → api + web
 ```
+
+## Path aliases
+
+Both apps import intra-app modules via the `@/*` alias (→ each app's `src/*`)
+instead of deep relative paths, e.g. `import { api } from '@/lib/api.js'`. The
+`@ribbon/shared` workspace alias is separate and unrelated. Convention: use
+`@/…` for anything that would otherwise traverse a parent dir (`../`); keep
+same-directory imports relative (`./helpers.js`).
+
+The alias is declared once per app as tsconfig `paths` (`baseUrl` + `"@/*"`),
+then each resolver in that app's toolchain is taught the same mapping:
+
+- **Web** — `apps/web/vite.config.ts` adds the `vite-tsconfig-paths` plugin,
+  which reads the tsconfig `paths`. That single plugin covers the dev server,
+  `vite build`, **and** Vitest (Vitest reads the Vite config).
+- **API** — three contexts, all pointing back at the same `@/*`:
+  - _Build + dev + runtime:_ SWC (`.swcrc` `jsc.baseUrl` + `jsc.paths`) rewrites
+    `@/…` to relative paths at compile time, so `nest build`, `nest start
+    --watch`, and `node dist/main.js` all work with no runtime resolver hook.
+  - _Tests:_ `apps/api/vitest.config.ts` maps `@` with a plain Vite
+    `resolve.alias` (**not** `vite-tsconfig-paths` — that package is ESM-only and
+    can't be `require`d by the API's CommonJS-loaded config). The same config
+    passes `swcrc: false` / `configFile: false` to the test-side SWC transform so
+    it ignores `.swcrc` (whose CommonJS output would break Vitest's ESM
+    pipeline).
+
+When adding a new resolver/tool to either app, remember it won't know about
+`@/*` unless you wire the alias into it — tsconfig `paths` alone only satisfies
+the type-checker and editor, never the bundler or runtime.
 
 ## Linting & formatting
 
