@@ -1,37 +1,32 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { CourseDetail, EnrollmentProgress, Lesson } from '@ribbon/shared';
+import type { Lesson } from '@ribbon/shared';
 import { api } from '@/lib/api';
-import { Button, Card, PageHeading, ProgressBar } from '@/components/ui';
+import { catalogDetailQuery, enrollmentsQuery } from '@/lib/queries';
+import { Button, Card, Loading, PageHeading, ProgressBar } from '@/components/ui';
 
 export function StudentCoursePlayerPage() {
   const { id = '' } = useParams();
   const queryClient = useQueryClient();
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 
-  const { data: course } = useQuery({
-    queryKey: ['catalog-detail', id],
-    queryFn: () => api.get<CourseDetail>(`/catalog/${id}`),
-  });
+  const { data: course } = useQuery(catalogDetailQuery(id));
 
-  const { data: enrollments } = useQuery({
-    queryKey: ['my-progress'],
-    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
-  });
+  const { data: enrollments } = useQuery(enrollmentsQuery());
 
   const progress = enrollments?.find((e) => e.course.id === id);
   const completed = useMemo(() => new Set(progress?.completedLessonIds ?? []), [progress]);
 
   const completeMutation = useMutation({
     mutationFn: (lessonId: string) => api.post(`/lessons/${lessonId}/complete`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-progress'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: enrollmentsQuery().queryKey }),
   });
 
   const lessons: Lesson[] = course?.modules.flatMap((m) => m.lessons) ?? [];
   const activeLesson = lessons.find((l) => l.id === activeLessonId) ?? lessons[0];
 
-  if (!course) return <p className="text-ink/40">Loading course…</p>;
+  if (!course) return <Loading>Loading course…</Loading>;
 
   return (
     <div>

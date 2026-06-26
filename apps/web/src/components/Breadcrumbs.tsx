@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import type { CourseDetail } from '@ribbon/shared';
-import { api } from '@/lib/api';
+import { catalogDetailQuery, courseEditQuery } from '@/lib/queries';
 
 interface Crumb {
   label: ReactNode;
@@ -11,14 +11,15 @@ interface Crumb {
 
 /**
  * Resolves a course's title for the breadcrumb trail. Reuses the exact query
- * key + endpoint the page itself uses, so this is a cache hit (no extra fetch)
- * and stays reactive — the title fills in once the page's data loads.
+ * factory the page itself uses, so this is a cache hit (no extra fetch) and
+ * stays reactive — the title fills in once the page's data loads.
  */
-function CourseTitleCrumb({ endpoint, queryKey }: { endpoint: string; queryKey: unknown[] }) {
-  const { data } = useQuery({
-    queryKey,
-    queryFn: () => api.get<CourseDetail>(endpoint),
-  });
+function CourseTitleCrumb({
+  query,
+}: {
+  query: { queryKey: readonly unknown[]; queryFn: () => Promise<CourseDetail> };
+}) {
+  const { data } = useQuery(query);
   return <>{data?.title ?? 'Course'}</>;
 }
 
@@ -39,7 +40,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'My Courses', to: '/teacher' },
       {
-        label: <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />,
+        label: <CourseTitleCrumb query={courseEditQuery(id)} />,
       },
     ],
   },
@@ -48,7 +49,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'My Courses', to: '/teacher' },
       {
-        label: <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />,
+        label: <CourseTitleCrumb query={courseEditQuery(id)} />,
         to: `/teacher/courses/${id}`,
       },
       { label: 'Analytics' },
@@ -63,7 +64,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'Catalog', to: '/student' },
       {
-        label: <CourseTitleCrumb endpoint={`/catalog/${id}`} queryKey={['catalog-detail', id]} />,
+        label: <CourseTitleCrumb query={catalogDetailQuery(id)} />,
       },
     ],
   },

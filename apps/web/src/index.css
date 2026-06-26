@@ -4,6 +4,10 @@
 
 :root {
   color-scheme: light;
+  /* Exposed so non-Tailwind consumers (e.g. Recharts SVG props) can reference
+     the same palette as the utility classes instead of forking hex values. */
+  --color-ribbon: theme('colors.ribbon');
+  --color-chart-grid: #e5e5e5;
 }
 
 body {

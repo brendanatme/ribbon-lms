@@ -1,4 +1,9 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type {
+  ButtonHTMLAttributes,
+  InputHTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from 'react';
 
 export function Button({
   children,
@@ -17,6 +22,36 @@ export function Button({
     >
       {children}
     </button>
+  );
+}
+
+// Shared base for all text-entry controls. Width is left to the caller
+// (`w-full`, `flex-1`, …) so the same control fits both full-width forms and
+// compact inline rows.
+const FIELD_CLASS =
+  'rounded-lg border border-ink/15 px-3 py-2 text-sm focus:border-ribbon focus:outline-none focus:ring-1 focus:ring-ribbon';
+
+export function Input({ className = '', ...props }: InputHTMLAttributes<HTMLInputElement>) {
+  return <input {...props} className={`${FIELD_CLASS} ${className}`} />;
+}
+
+export function Textarea({
+  className = '',
+  ...props
+}: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea {...props} className={`${FIELD_CLASS} ${className}`} />;
+}
+
+// Labelled input for stacked forms (auth, etc.).
+export function Field({
+  label,
+  ...props
+}: { label: string } & InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-sm font-medium text-ink/70">{label}</span>
+      <Input className="w-full" {...props} />
+    </label>
   );
 }
 
@@ -45,9 +80,23 @@ export function ProgressBar({ percent }: { percent: number }) {
   );
 }
 
-export function Badge({ children }: { children: ReactNode }) {
+const BADGE_TONES = {
+  ribbon: 'bg-ribbon-light text-ribbon',
+  red: 'bg-red-50 text-red-600',
+  amber: 'bg-amber-50 text-amber-700',
+};
+
+export function Badge({
+  children,
+  tone = 'ribbon',
+}: {
+  children: ReactNode;
+  tone?: keyof typeof BADGE_TONES;
+}) {
   return (
-    <span className="inline-block rounded-full bg-ribbon-light px-2.5 py-0.5 text-xs font-medium text-ribbon">
+    <span
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${BADGE_TONES[tone]}`}
+    >
       {children}
     </span>
   );
@@ -59,5 +108,24 @@ export function PageHeading({ title, subtitle }: { title: string; subtitle?: str
       <h1 className="font-display text-3xl font-semibold text-ink">{title}</h1>
       {subtitle && <p className="mt-1 text-sm text-ink/60">{subtitle}</p>}
     </header>
+  );
+}
+
+// Inline "loading…" line used while a page's primary query is in flight.
+export function Loading({ children = 'Loading…' }: { children?: ReactNode }) {
+  return <p className="text-ink/40">{children}</p>;
+}
+
+// Full-viewport centered message, used by route guards and redirects.
+export function CenteredMessage({ children }: { children: ReactNode }) {
+  return <div className="grid min-h-screen place-items-center text-ink/50">{children}</div>;
+}
+
+// Empty-state placeholder: a card with centered muted text (and optional links).
+export function EmptyState({ children }: { children: ReactNode }) {
+  return (
+    <Card>
+      <p className="text-center text-ink/50">{children}</p>
+    </Card>
   );
 }

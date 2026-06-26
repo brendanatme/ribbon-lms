@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { Course, EnrollmentProgress } from '@ribbon/shared';
+import type { Course } from '@ribbon/shared';
 import { api, ApiError } from '@/lib/api';
-import { Button, Card, PageHeading } from '@/components/ui';
+import { enrollmentsQuery } from '@/lib/queries';
+import { Button, Card, EmptyState, Loading, PageHeading } from '@/components/ui';
 
 type CatalogCourse = Course & { enrollmentCount: number };
 
@@ -15,17 +16,14 @@ export function StudentCatalogPage() {
     queryFn: () => api.get<CatalogCourse[]>('/catalog'),
   });
 
-  const { data: enrollments } = useQuery({
-    queryKey: ['my-progress'],
-    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
-  });
+  const { data: enrollments } = useQuery(enrollmentsQuery());
 
   const enrolledIds = new Set(enrollments?.map((e) => e.course.id));
 
   const enrollMutation = useMutation({
     mutationFn: (courseId: string) => api.post('/enrollments', { courseId }),
     onSuccess: (_data, courseId) => {
-      queryClient.invalidateQueries({ queryKey: ['my-progress'] });
+      queryClient.invalidateQueries({ queryKey: enrollmentsQuery().queryKey });
       navigate(`/student/courses/${courseId}`);
     },
     onError: (err, courseId) => {
@@ -40,7 +38,7 @@ export function StudentCatalogPage() {
     <div>
       <PageHeading title="Course catalog" subtitle="Browse and enroll — all free" />
 
-      {isLoading && <p className="text-ink/40">Loading catalog…</p>}
+      {isLoading && <Loading>Loading catalog…</Loading>}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {courses?.map((course) => {
@@ -72,9 +70,7 @@ export function StudentCatalogPage() {
       </div>
 
       {courses && courses.length === 0 && (
-        <Card>
-          <p className="text-center text-ink/50">No published courses available yet.</p>
-        </Card>
+        <EmptyState>No published courses available yet.</EmptyState>
       )}
     </div>
   );

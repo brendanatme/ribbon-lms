@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Course, CreateCourseInput } from '@ribbon/shared';
 import { api } from '@/lib/api';
-import { Badge, Button, Card, PageHeading } from '@/components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  EmptyState,
+  Input,
+  Loading,
+  PageHeading,
+  Textarea,
+} from '@/components/ui';
 
 export function TeacherCoursesPage() {
   const queryClient = useQueryClient();
@@ -42,17 +51,12 @@ export function TeacherCoursesPage() {
             }}
             className="space-y-3"
           >
-            <input
-              name="title"
-              placeholder="Course title"
-              required
-              className="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm focus:border-ribbon focus:outline-none"
-            />
-            <textarea
+            <Input name="title" placeholder="Course title" required className="w-full" />
+            <Textarea
               name="description"
               placeholder="What will students learn?"
               rows={3}
-              className="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm focus:border-ribbon focus:outline-none"
+              className="w-full"
             />
             <Button type="submit" disabled={createMutation.isPending}>
               {createMutation.isPending ? 'Creating…' : 'Create course'}
@@ -61,20 +65,14 @@ export function TeacherCoursesPage() {
         </Card>
       )}
 
-      {isLoading && <p className="text-ink/40">Loading courses…</p>}
+      {isLoading && <Loading>Loading courses…</Loading>}
 
       <div className="grid gap-4 sm:grid-cols-2">
         {courses?.map((course) => (
           <Card key={course.id}>
             <div className="mb-2 flex items-start justify-between gap-2">
               <h3 className="font-display text-lg font-semibold">{course.title}</h3>
-              {course.published ? (
-                <Badge>Published</Badge>
-              ) : (
-                <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
-                  Draft
-                </span>
-              )}
+              {course.published ? <Badge>Published</Badge> : <Badge tone="amber">Draft</Badge>}
             </div>
             <p className="mb-4 text-sm text-ink/60">
               {course.description || 'No description yet.'}
@@ -92,11 +90,7 @@ export function TeacherCoursesPage() {
       </div>
 
       {courses && courses.length === 0 && (
-        <Card>
-          <p className="text-center text-ink/50">
-            No courses yet. Create your first course to get started.
-          </p>
-        </Card>
+        <EmptyState>No courses yet. Create your first course to get started.</EmptyState>
       )}
     </div>
   );

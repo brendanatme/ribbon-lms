@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { CourseAnalytics } from '@ribbon/shared';
 import { api } from '@/lib/api';
-import { Card, PageHeading } from '@/components/ui';
+import { Card, Loading, PageHeading } from '@/components/ui';
 
 function Kpi({ label, value }: { label: string; value: string }) {
   return (
@@ -21,7 +21,7 @@ export function TeacherAnalyticsPage() {
     queryFn: () => api.get<CourseAnalytics>(`/analytics/courses/${id}`),
   });
 
-  if (isLoading || !data) return <p className="text-ink/40">Loading analytics…</p>;
+  if (isLoading || !data) return <Loading>Loading analytics…</Loading>;
 
   return (
     <div>
@@ -40,7 +40,7 @@ export function TeacherAnalyticsPage() {
         ) : (
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data.lessonCompletion}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
               <XAxis
                 dataKey="title"
                 tick={{ fontSize: 11 }}
@@ -51,7 +51,7 @@ export function TeacherAnalyticsPage() {
               />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Bar dataKey="completedCount" fill="#3a5a9b" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="completedCount" fill="var(--color-ribbon)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         )}

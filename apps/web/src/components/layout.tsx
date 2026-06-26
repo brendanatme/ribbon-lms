@@ -2,15 +2,8 @@ import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { ROLE_HOME_PATH, type Role } from '@ribbon/shared';
 import { useAuth } from '@/lib/auth';
-import { Button } from './ui';
+import { Button, CenteredMessage } from './ui';
 import { Breadcrumbs } from './Breadcrumbs';
-
-export function RequireAuth({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
-  if (loading) return <CenteredMessage>Loading…</CenteredMessage>;
-  if (!user) return <Navigate to="/login" replace />;
-  return <>{children}</>;
-}
 
 export function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -18,10 +11,6 @@ export function RequireRole({ role, children }: { role: Role; children: ReactNod
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== role) return <Navigate to={ROLE_HOME_PATH[user.role]} replace />;
   return <>{children}</>;
-}
-
-function CenteredMessage({ children }: { children: ReactNode }) {
-  return <div className="grid min-h-screen place-items-center text-ink/50">{children}</div>;
 }
 
 const NAV: Record<Role, { to: string; label: string }[]> = {

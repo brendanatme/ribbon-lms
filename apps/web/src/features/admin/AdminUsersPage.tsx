@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Role, UserStatus, type PaginatedUsers, type UserProfile } from '@ribbon/shared';
 import { api } from '@/lib/api';
-import { Badge, Card, PageHeading } from '@/components/ui';
+import { Badge, Card, Input, PageHeading } from '@/components/ui';
 
 export function AdminUsersPage() {
   const queryClient = useQueryClient();
@@ -30,11 +30,11 @@ export function AdminUsersPage() {
     <div>
       <PageHeading title="User management" subtitle="Manage roles and account access" />
 
-      <input
+      <Input
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search by name or email"
-        className="mb-4 w-full max-w-sm rounded-lg border border-ink/15 px-3 py-2 text-sm focus:border-ribbon focus:outline-none"
+        className="mb-4 w-full max-w-sm"
       />
 
       <Card className="overflow-hidden p-0">
@@ -89,9 +89,7 @@ export function AdminUsersPage() {
                     {u.status === UserStatus.ACTIVE ? (
                       <Badge>Active</Badge>
                     ) : (
-                      <span className="inline-block rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-600">
-                        Disabled
-                      </span>
+                      <Badge tone="red">Disabled</Badge>
                     )}
                   </button>
                 </td>

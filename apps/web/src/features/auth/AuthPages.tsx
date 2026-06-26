@@ -1,16 +1,16 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { ROLE_HOME_PATH } from '@ribbon/shared';
+import { ROLE_HOME_PATH, type UserProfile } from '@ribbon/shared';
 import { useAuth } from '@/lib/auth';
 import { ApiError } from '@/lib/api';
-import { Button, Card } from '@/components/ui';
+import { Button, Card, Field } from '@/components/ui';
 
 function AuthShell({
   children,
   title,
   subtitle,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   title: string;
   subtitle: string;
 }) {
@@ -28,46 +28,40 @@ function AuthShell({
   );
 }
 
-function Field({
-  label,
-  ...props
-}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <label className="block">
-      <span className="mb-1 block text-sm font-medium text-ink/70">{label}</span>
-      <input
-        {...props}
-        className="w-full rounded-lg border border-ink/15 px-3 py-2 text-sm focus:border-ribbon focus:outline-none focus:ring-1 focus:ring-ribbon"
-      />
-    </label>
-  );
-}
-
-export function LoginPage() {
-  const { user, login } = useAuth();
+/**
+ * Drives an auth form: owns the error/submitting state and the submit lifecycle
+ * (prevent default → run `action` → redirect home, or surface the error).
+ * Shared by login and signup, which differ only in their fields and action.
+ */
+function useAuthSubmit(action: (form: FormData) => Promise<UserProfile>) {
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-
-  if (user) return <Navigate to={ROLE_HOME_PATH[user.role]} replace />;
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError('');
     setSubmitting(true);
-    const form = new FormData(e.currentTarget);
     try {
-      const u = await login({
-        email: String(form.get('email')),
-        password: String(form.get('password')),
-      });
-      navigate(ROLE_HOME_PATH[u.role]);
+      const user = await action(new FormData(e.currentTarget));
+      navigate(ROLE_HOME_PATH[user.role]);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Something went wrong');
     } finally {
       setSubmitting(false);
     }
   }
+
+  return { error, submitting, onSubmit };
+}
+
+export function LoginPage() {
+  const { user, login } = useAuth();
+  const { error, submitting, onSubmit } = useAuthSubmit((form) =>
+    login({ email: String(form.get('email')), password: String(form.get('password')) }),
+  );
+
+  if (user) return <Navigate to={ROLE_HOME_PATH[user.role]} replace />;
 
   return (
     <AuthShell title="Welcome back" subtitle="Sign in to continue learning">
@@ -97,30 +91,15 @@ export function LoginPage() {
 
 export function SignupPage() {
   const { user, signup } = useAuth();
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const { error, submitting, onSubmit } = useAuthSubmit((form) =>
+    signup({
+      name: String(form.get('name')),
+      email: String(form.get('email')),
+      password: String(form.get('password')),
+    }),
+  );
 
   if (user) return <Navigate to={ROLE_HOME_PATH[user.role]} replace />;
-
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setError('');
-    setSubmitting(true);
-    const form = new FormData(e.currentTarget);
-    try {
-      const u = await signup({
-        name: String(form.get('name')),
-        email: String(form.get('email')),
-        password: String(form.get('password')),
-      });
-      navigate(ROLE_HOME_PATH[u.role]);
-    } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Something went wrong');
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   return (
     <AuthShell title="Create your account" subtitle="Start learning for free — no payment needed">

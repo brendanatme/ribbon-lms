@@ -1,20 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import type { EnrollmentProgress } from '@ribbon/shared';
-import { api } from '@/lib/api';
-import { Button, Card, PageHeading, ProgressBar } from '@/components/ui';
+import { enrollmentsQuery } from '@/lib/queries';
+import { Button, Card, EmptyState, Loading, PageHeading, ProgressBar } from '@/components/ui';
 
 export function StudentLearningPage() {
-  const { data: enrollments, isLoading } = useQuery({
-    queryKey: ['my-progress'],
-    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
-  });
+  const { data: enrollments, isLoading } = useQuery(enrollmentsQuery());
 
   return (
     <div>
       <PageHeading title="My learning" subtitle="Pick up where you left off" />
 
-      {isLoading && <p className="text-ink/40">Loading…</p>}
+      {isLoading && <Loading />}
 
       <div className="space-y-4">
         {enrollments?.map((e) => (
@@ -38,15 +34,13 @@ export function StudentLearningPage() {
       </div>
 
       {enrollments && enrollments.length === 0 && (
-        <Card>
-          <p className="text-center text-ink/50">
-            You haven&apos;t enrolled in any courses yet.{' '}
-            <Link to="/student" className="font-medium text-ribbon hover:underline">
-              Browse the catalog
-            </Link>
-            .
-          </p>
-        </Card>
+        <EmptyState>
+          You haven&apos;t enrolled in any courses yet.{' '}
+          <Link to="/student" className="font-medium text-ribbon hover:underline">
+            Browse the catalog
+          </Link>
+          .
+        </EmptyState>
       )}
     </div>
   );
