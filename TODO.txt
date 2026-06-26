@@ -1,0 +1,2 @@
+course text content, quizzes, and grading
+student: completed badge
