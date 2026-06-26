@@ -1,0 +1,22 @@
+{
+  "name": "ribbon-lms",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Ribbon LMS — modular full-stack learning management system",
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "db:migrate": "pnpm --filter @ribbon/api db:migrate",
+    "db:seed": "pnpm --filter @ribbon/api db:seed",
+    "db:generate": "pnpm --filter @ribbon/api db:generate"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
