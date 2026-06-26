@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CoursesModule } from './courses/courses.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { QuizzesModule } from './quizzes/quizzes.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
@@ -19,6 +20,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     UsersModule,
     CoursesModule,
     EnrollmentsModule,
+    QuizzesModule,
     AnalyticsModule,
   ],
   providers: [

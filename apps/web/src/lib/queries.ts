@@ -1,4 +1,11 @@
-import type { CourseDetail, EnrollmentProgress } from '@ribbon/shared';
+import type {
+  CourseDetail,
+  EnrollmentProgress,
+  QuizAttemptSummary,
+  QuizAuthor,
+  QuizResults,
+  QuizTake,
+} from '@ribbon/shared';
 import { api } from './api';
 
 /**
@@ -21,4 +28,24 @@ export const courseEditQuery = (id: string) => ({
 export const catalogDetailQuery = (id: string) => ({
   queryKey: ['catalog-detail', id] as const,
   queryFn: () => api.get<CourseDetail>(`/catalog/${id}`),
+});
+
+export const quizAuthorQuery = (lessonId: string) => ({
+  queryKey: ['quiz-author', lessonId] as const,
+  queryFn: () => api.get<QuizAuthor | null>(`/lessons/${lessonId}/quiz`),
+});
+
+export const quizTakeQuery = (lessonId: string) => ({
+  queryKey: ['quiz-take', lessonId] as const,
+  queryFn: () => api.get<QuizTake>(`/lessons/${lessonId}/quiz/take`),
+});
+
+export const quizMyResultQuery = (lessonId: string) => ({
+  queryKey: ['quiz-my-result', lessonId] as const,
+  queryFn: () => api.get<QuizAttemptSummary | null>(`/lessons/${lessonId}/quiz/my-result`),
+});
+
+export const quizResultsQuery = (lessonId: string) => ({
+  queryKey: ['quiz-results', lessonId] as const,
+  queryFn: () => api.get<QuizResults>(`/lessons/${lessonId}/quiz/results`),
 });

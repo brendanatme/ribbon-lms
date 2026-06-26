@@ -22,11 +22,21 @@ export const courseAnalyticsSchema = z.object({
   enrollmentCount: z.number(),
   completionRate: z.number(),
   averageProgress: z.number(),
+  // Mean of every student's best score across all quizzes in the course.
+  averageQuizScore: z.number(),
   lessonCompletion: z.array(
     z.object({
       lessonId: z.string(),
       title: z.string(),
       completedCount: z.number(),
+    }),
+  ),
+  quizStats: z.array(
+    z.object({
+      lessonId: z.string(),
+      title: z.string(),
+      averageScore: z.number(),
+      attemptCount: z.number(),
     }),
   ),
 });

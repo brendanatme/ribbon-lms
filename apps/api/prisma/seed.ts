@@ -66,6 +66,36 @@ async function main() {
                     content: 'TypeScript adds static types to JavaScript.',
                     order: 0,
                     durationMin: 6,
+                    quiz: {
+                      create: {
+                        title: 'Why TypeScript? — quick check',
+                        questions: {
+                          create: [
+                            {
+                              type: 'SINGLE_CHOICE',
+                              prompt: 'What does TypeScript add to JavaScript?',
+                              order: 0,
+                              points: 1,
+                              options: {
+                                create: [
+                                  { text: 'Static types', isCorrect: true, order: 0 },
+                                  { text: 'A new runtime', isCorrect: false, order: 1 },
+                                  { text: 'A database', isCorrect: false, order: 2 },
+                                ],
+                              },
+                            },
+                            {
+                              type: 'TEXT',
+                              prompt:
+                                'What file extension do TypeScript files use? (incl. the dot)',
+                              order: 1,
+                              points: 1,
+                              correctText: '.ts',
+                            },
+                          ],
+                        },
+                      },
+                    },
                   },
                   {
                     title: 'Setting Up Your Environment',

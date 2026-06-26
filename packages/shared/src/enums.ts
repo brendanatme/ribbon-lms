@@ -15,6 +15,15 @@ export const UserStatus = {
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus];
 export const userStatusSchema = z.nativeEnum(UserStatus);
 
+export const QuestionType = {
+  SINGLE_CHOICE: 'SINGLE_CHOICE',
+  MULTIPLE_CHOICE: 'MULTIPLE_CHOICE',
+  TEXT: 'TEXT',
+  NUMBER: 'NUMBER',
+} as const;
+export type QuestionType = (typeof QuestionType)[keyof typeof QuestionType];
+export const questionTypeSchema = z.nativeEnum(QuestionType);
+
 export const ROLE_HOME_PATH: Record<Role, string> = {
   ADMIN: '/admin',
   TEACHER: '/teacher',

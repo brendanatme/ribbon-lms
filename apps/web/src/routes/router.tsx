@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { Role } from '@ribbon/shared';
 import { DashboardShell, RequireRole } from '@/components/layout';
+import { RouteError } from '@/components/RouteError';
 import { LoginPage, SignupPage } from '@/features/auth/AuthPages';
 import { AdminUsersPage } from '@/features/admin/AdminUsersPage';
 import { TeacherCoursesPage } from '@/features/teacher/TeacherCoursesPage';
@@ -23,7 +24,7 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
         <DashboardShell />
       </RequireRole>
     ),
-    children: [{ index: true, element: <AdminUsersPage /> }],
+    children: [{ index: true, element: <AdminUsersPage />, errorElement: <RouteError /> }],
   },
 
   {
@@ -34,9 +35,13 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
       </RequireRole>
     ),
     children: [
-      { index: true, element: <TeacherCoursesPage /> },
-      { path: 'courses/:id', element: <TeacherCourseEditorPage /> },
-      { path: 'courses/:id/analytics', element: <TeacherAnalyticsPage /> },
+      { index: true, element: <TeacherCoursesPage />, errorElement: <RouteError /> },
+      { path: 'courses/:id', element: <TeacherCourseEditorPage />, errorElement: <RouteError /> },
+      {
+        path: 'courses/:id/analytics',
+        element: <TeacherAnalyticsPage />,
+        errorElement: <RouteError />,
+      },
     ],
   },
 
@@ -48,9 +53,9 @@ export const router: ReturnType<typeof createBrowserRouter> = createBrowserRoute
       </RequireRole>
     ),
     children: [
-      { index: true, element: <StudentCatalogPage /> },
-      { path: 'learning', element: <StudentLearningPage /> },
-      { path: 'courses/:id', element: <StudentCoursePlayerPage /> },
+      { index: true, element: <StudentCatalogPage />, errorElement: <RouteError /> },
+      { path: 'learning', element: <StudentLearningPage />, errorElement: <RouteError /> },
+      { path: 'courses/:id', element: <StudentCoursePlayerPage />, errorElement: <RouteError /> },
     ],
   },
 

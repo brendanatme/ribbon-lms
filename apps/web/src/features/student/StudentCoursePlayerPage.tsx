@@ -5,6 +5,7 @@ import type { Lesson } from '@ribbon/shared';
 import { api } from '@/lib/api';
 import { catalogDetailQuery, enrollmentsQuery } from '@/lib/queries';
 import { Button, Card, Loading, PageHeading, ProgressBar } from '@/components/ui';
+import { QuizPlayer } from './QuizPlayer';
 
 export function StudentCoursePlayerPage() {
   const { id = '' } = useParams();
@@ -91,6 +92,9 @@ export function StudentCoursePlayerPage() {
               >
                 {completed.has(activeLesson.id) ? 'Completed' : 'Mark complete'}
               </Button>
+              {activeLesson.hasQuiz && (
+                <QuizPlayer key={activeLesson.id} lessonId={activeLesson.id} />
+              )}
             </article>
           ) : (
             <p className="text-ink/40">This course has no lessons yet.</p>
