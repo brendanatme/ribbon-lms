@@ -13,3 +13,6 @@ apps/web/dist/
 
 # Personal, per-developer Claude Code settings (keep .claude/settings.json shared)
 .claude/settings.local.json
+
+# TypeScript incremental build info
+*.tsbuildinfo
