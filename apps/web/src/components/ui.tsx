@@ -30,8 +30,17 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 
 export function ProgressBar({ percent }: { percent: number }) {
   return (
-    <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
-      <div className="h-full rounded-full bg-ribbon transition-all" style={{ width: `${percent}%` }} />
+    <div
+      className="h-2 w-full overflow-hidden rounded-full bg-ink/10"
+      role="progressbar"
+      aria-valuenow={percent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <div
+        className="h-full rounded-full bg-ribbon transition-all"
+        style={{ width: `${percent}%` }}
+      />
     </div>
   );
 }

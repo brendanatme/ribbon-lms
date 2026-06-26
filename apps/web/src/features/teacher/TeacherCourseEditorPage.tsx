@@ -27,8 +27,7 @@ export function TeacherCourseEditorPage() {
   });
 
   const addModuleMutation = useMutation({
-    mutationFn: (input: CreateModuleInput) =>
-      api.post<Module>(`/courses/${id}/modules`, input),
+    mutationFn: (input: CreateModuleInput) => api.post<Module>(`/courses/${id}/modules`, input),
     onSuccess: invalidate,
   });
 
@@ -58,7 +57,10 @@ export function TeacherCourseEditorPage() {
             <h3 className="mb-3 font-display text-lg font-semibold">{mod.title}</h3>
             <ul className="mb-3 space-y-1">
               {mod.lessons.map((lesson) => (
-                <li key={lesson.id} className="flex items-center justify-between rounded-lg bg-sand px-3 py-2 text-sm">
+                <li
+                  key={lesson.id}
+                  className="flex items-center justify-between rounded-lg bg-sand px-3 py-2 text-sm"
+                >
                   <span>{lesson.title}</span>
                   <span className="text-ink/40">{lesson.durationMin} min</span>
                 </li>

@@ -55,9 +55,7 @@ export class CoursesService {
   }
 
   create(teacherId: string, dto: CreateCourseInput) {
-    return this.prisma.course
-      .create({ data: { ...dto, teacherId } })
-      .then((c) => this.toCourse(c));
+    return this.prisma.course.create({ data: { ...dto, teacherId } }).then((c) => this.toCourse(c));
   }
 
   async update(teacherId: string, courseId: string, dto: UpdateCourseInput) {

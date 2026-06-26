@@ -15,8 +15,7 @@ export function TeacherCoursesPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (input: CreateCourseInput) =>
-      api.post<Course>('/courses', input),
+    mutationFn: (input: CreateCourseInput) => api.post<Course>('/courses', input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teacher-courses'] });
       setCreating(false);
@@ -69,13 +68,17 @@ export function TeacherCoursesPage() {
           <Card key={course.id}>
             <div className="mb-2 flex items-start justify-between gap-2">
               <h3 className="font-display text-lg font-semibold">{course.title}</h3>
-              {course.published ? <Badge>Published</Badge> : (
+              {course.published ? (
+                <Badge>Published</Badge>
+              ) : (
                 <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700">
                   Draft
                 </span>
               )}
             </div>
-            <p className="mb-4 text-sm text-ink/60">{course.description || 'No description yet.'}</p>
+            <p className="mb-4 text-sm text-ink/60">
+              {course.description || 'No description yet.'}
+            </p>
             <div className="flex gap-2">
               <Link to={`/teacher/courses/${course.id}`}>
                 <Button variant="ghost">Edit</Button>

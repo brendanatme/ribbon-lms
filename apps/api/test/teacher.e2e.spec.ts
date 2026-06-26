@@ -1,6 +1,13 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createTestApp, cleanupTestApp, makeUser, auth, type TestApp, type TestUser } from './helpers.js';
+import {
+  createTestApp,
+  cleanupTestApp,
+  makeUser,
+  auth,
+  type TestApp,
+  type TestUser,
+} from './helpers.js';
 
 /**
  * Integration test: a teacher creates a course, adds a module + lesson,
@@ -46,7 +53,10 @@ describe('Teacher course + publish flow', () => {
       .expect(201);
 
     // Not in catalog while it's a draft.
-    const draftCatalog = await request(server).get('/api/catalog').set(auth(teacher.token)).expect(200);
+    const draftCatalog = await request(server)
+      .get('/api/catalog')
+      .set(auth(teacher.token))
+      .expect(200);
     expect(draftCatalog.body.some((c: { id: string }) => c.id === courseId)).toBe(false);
 
     // Publish.
@@ -60,7 +70,10 @@ describe('Teacher course + publish flow', () => {
     const catalog = await request(server).get('/api/catalog').set(auth(teacher.token)).expect(200);
     expect(catalog.body.some((c: { id: string }) => c.id === courseId)).toBe(true);
 
-    const detail = await request(server).get(`/api/catalog/${courseId}`).set(auth(teacher.token)).expect(200);
+    const detail = await request(server)
+      .get(`/api/catalog/${courseId}`)
+      .set(auth(teacher.token))
+      .expect(200);
     expect(detail.body.lessonCount).toBe(1);
   });
 

@@ -23,8 +23,7 @@ export function StudentCatalogPage() {
   const enrolledIds = new Set(enrollments?.map((e) => e.course.id));
 
   const enrollMutation = useMutation({
-    mutationFn: (courseId: string) =>
-      api.post('/enrollments', { courseId }),
+    mutationFn: (courseId: string) => api.post('/enrollments', { courseId }),
     onSuccess: (_data, courseId) => {
       queryClient.invalidateQueries({ queryKey: ['my-progress'] });
       navigate(`/student/courses/${courseId}`);
@@ -54,7 +53,11 @@ export function StudentCatalogPage() {
               <p className="mt-3 text-xs text-ink/40">{course.enrollmentCount} enrolled</p>
               <div className="mt-3">
                 {enrolled ? (
-                  <Button variant="ghost" onClick={() => navigate(`/student/courses/${course.id}`)} className="w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={() => navigate(`/student/courses/${course.id}`)}
+                    className="w-full"
+                  >
                     Continue
                   </Button>
                 ) : (

@@ -1,10 +1,5 @@
 import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
-import {
-  Role,
-  listUsersQuerySchema,
-  updateRoleSchema,
-  updateStatusSchema,
-} from '@ribbon/shared';
+import { Role, listUsersQuerySchema, updateRoleSchema, updateStatusSchema } from '@ribbon/shared';
 import type { ListUsersQuery, UpdateRoleInput, UpdateStatusInput } from '@ribbon/shared';
 import { UsersService } from './users.service.js';
 import { Roles } from '../common/decorators/auth.decorators.js';

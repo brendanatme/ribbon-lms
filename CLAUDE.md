@@ -38,6 +38,43 @@ pnpm --filter @ribbon/web dev      # http://localhost:5174 (proxies /api → 300
 pnpm build                         # pnpm -r build: shared → api + web
 ```
 
+## Linting & formatting
+
+Tooling lives at the **workspace root** and is shared by all three projects
+(`apps/api`, `apps/web`, `packages/shared`) for maximum consistency:
+
+- **Prettier** (`.prettierrc.json`) — the formatter. Single quotes, semicolons,
+  trailing commas, 100-col width. `.prettierignore` excludes build output,
+  Prisma migrations, the lockfile, and `*.md`.
+- **ESLint flat config** (`eslint.config.mjs`) — the linter. One shared base
+  (`@eslint/js` + `typescript-eslint` recommended) with `eslint-config-prettier`
+  last so it never fights the formatter. Per-project layers add the
+  environment-specific bits: the web app gets React + browser globals, the API
+  and shared package get Node globals. ESLint walks up to this root file, so the
+  per-package `lint` scripts all use it.
+
+```bash
+pnpm lint            # eslint . across the whole repo
+pnpm lint:fix        # eslint . --fix
+pnpm format          # prettier --write .
+pnpm format:check    # prettier --check . (CI-friendly, no writes)
+pnpm --filter @ribbon/web lint   # or format / format:check — per project
+```
+
+### Pre-commit hook
+
+Husky + lint-staged run on every `git commit` (`.husky/pre-commit` →
+`pnpm lint-staged`). Staged `*.ts/tsx` files are run through `eslint --fix` then
+`prettier --write`; other supported files just get Prettier. A commit is
+**rejected** if a non-auto-fixable lint error remains; auto-fixable formatting is
+applied and re-staged transparently.
+
+- **The hook needs Node 20**, same as everything else. If your shell defaults to
+  an older Node, the hook fails on the corepack `SyntaxError` before linting even
+  runs — `nvm use 20` before committing.
+- `husky` is installed via the root `prepare` script, so the hook is wired up
+  automatically on `pnpm install`.
+
 ## Shared package (`packages/shared`)
 
 - Single source of truth for Zod schemas, enums, and DTO types, consumed by

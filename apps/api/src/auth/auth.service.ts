@@ -42,11 +42,17 @@ export class AuthService {
   async login(input: LoginInput): Promise<AuthResponse> {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } });
     if (!user || user.status === 'DISABLED') {
-      throw new UnauthorizedException({ message: 'Invalid credentials', code: 'INVALID_CREDENTIALS' });
+      throw new UnauthorizedException({
+        message: 'Invalid credentials',
+        code: 'INVALID_CREDENTIALS',
+      });
     }
     const valid = await argon2.verify(user.passwordHash, input.password);
     if (!valid) {
-      throw new UnauthorizedException({ message: 'Invalid credentials', code: 'INVALID_CREDENTIALS' });
+      throw new UnauthorizedException({
+        message: 'Invalid credentials',
+        code: 'INVALID_CREDENTIALS',
+      });
     }
     return { accessToken: this.sign(user), user: this.toProfile(user) };
   }

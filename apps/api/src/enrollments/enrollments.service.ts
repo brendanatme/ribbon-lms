@@ -40,7 +40,8 @@ export class EnrollmentsService {
     const course = await this.prisma.course.findFirst({
       where: { id: courseId, published: true },
     });
-    if (!course) throw new NotFoundException({ message: 'Course not available', code: 'NOT_FOUND' });
+    if (!course)
+      throw new NotFoundException({ message: 'Course not available', code: 'NOT_FOUND' });
 
     const existing = await this.prisma.enrollment.findUnique({
       where: { studentId_courseId: { studentId, courseId } },

@@ -15,19 +15,34 @@ async function main() {
   const teacher = await prisma.user.upsert({
     where: { email: 'teacher@ribbon.dev' },
     update: {},
-    create: { email: 'teacher@ribbon.dev', name: 'Theo Teacher', passwordHash: password, role: 'TEACHER' },
+    create: {
+      email: 'teacher@ribbon.dev',
+      name: 'Theo Teacher',
+      passwordHash: password,
+      role: 'TEACHER',
+    },
   });
 
   await prisma.user.upsert({
     where: { email: 'student@ribbon.dev' },
     update: {},
-    create: { email: 'student@ribbon.dev', name: 'Sam Student', passwordHash: password, role: 'STUDENT' },
+    create: {
+      email: 'student@ribbon.dev',
+      name: 'Sam Student',
+      passwordHash: password,
+      role: 'STUDENT',
+    },
   });
 
   await prisma.user.upsert({
     where: { email: 'student2@ribbon.dev' },
     update: {},
-    create: { email: 'student2@ribbon.dev', name: 'Nia Novice', passwordHash: password, role: 'STUDENT' },
+    create: {
+      email: 'student2@ribbon.dev',
+      name: 'Nia Novice',
+      passwordHash: password,
+      role: 'STUDENT',
+    },
   });
 
   // Sample published course with modules + lessons
@@ -46,8 +61,18 @@ async function main() {
               order: 0,
               lessons: {
                 create: [
-                  { title: 'Why TypeScript?', content: 'TypeScript adds static types to JavaScript.', order: 0, durationMin: 6 },
-                  { title: 'Setting Up Your Environment', content: 'Install Node and the TypeScript compiler.', order: 1, durationMin: 8 },
+                  {
+                    title: 'Why TypeScript?',
+                    content: 'TypeScript adds static types to JavaScript.',
+                    order: 0,
+                    durationMin: 6,
+                  },
+                  {
+                    title: 'Setting Up Your Environment',
+                    content: 'Install Node and the TypeScript compiler.',
+                    order: 1,
+                    durationMin: 8,
+                  },
                 ],
               },
             },
@@ -56,8 +81,18 @@ async function main() {
               order: 1,
               lessons: {
                 create: [
-                  { title: 'Primitives and Inference', content: 'string, number, boolean, and inference.', order: 0, durationMin: 10 },
-                  { title: 'Interfaces and Types', content: 'Modeling object shapes.', order: 1, durationMin: 12 },
+                  {
+                    title: 'Primitives and Inference',
+                    content: 'string, number, boolean, and inference.',
+                    order: 0,
+                    durationMin: 10,
+                  },
+                  {
+                    title: 'Interfaces and Types',
+                    content: 'Modeling object shapes.',
+                    order: 1,
+                    durationMin: 12,
+                  },
                 ],
               },
             },

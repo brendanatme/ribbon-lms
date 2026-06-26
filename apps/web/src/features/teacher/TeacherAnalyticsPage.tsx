@@ -41,7 +41,14 @@ export function TeacherAnalyticsPage() {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={data.lessonCompletion}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
-              <XAxis dataKey="title" tick={{ fontSize: 11 }} interval={0} angle={-15} textAnchor="end" height={60} />
+              <XAxis
+                dataKey="title"
+                tick={{ fontSize: 11 }}
+                interval={0}
+                angle={-15}
+                textAnchor="end"
+                height={60}
+              />
               <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
               <Tooltip />
               <Bar dataKey="completedCount" fill="#3a5a9b" radius={[4, 4, 0, 0]} />

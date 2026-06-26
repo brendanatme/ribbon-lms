@@ -24,7 +24,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setAccessToken(saved);
-    api.get<UserProfile>('/auth/me')
+    api
+      .get<UserProfile>('/auth/me')
       .then(setUser)
       .catch(() => {
         sessionStorage.removeItem('ribbon_token');

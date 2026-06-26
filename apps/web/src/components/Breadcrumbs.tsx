@@ -14,13 +14,7 @@ interface Crumb {
  * key + endpoint the page itself uses, so this is a cache hit (no extra fetch)
  * and stays reactive — the title fills in once the page's data loads.
  */
-function CourseTitleCrumb({
-  endpoint,
-  queryKey,
-}: {
-  endpoint: string;
-  queryKey: unknown[];
-}) {
+function CourseTitleCrumb({ endpoint, queryKey }: { endpoint: string; queryKey: unknown[] }) {
   const { data } = useQuery({
     queryKey,
     queryFn: () => api.get<CourseDetail>(endpoint),
@@ -45,9 +39,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'My Courses', to: '/teacher' },
       {
-        label: (
-          <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />
-        ),
+        label: <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />,
       },
     ],
   },
@@ -56,9 +48,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'My Courses', to: '/teacher' },
       {
-        label: (
-          <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />
-        ),
+        label: <CourseTitleCrumb endpoint={`/courses/${id}`} queryKey={['course-edit', id]} />,
         to: `/teacher/courses/${id}`,
       },
       { label: 'Analytics' },
@@ -73,9 +63,7 @@ const ROUTES: { path: string; crumbs: CrumbResolver }[] = [
     crumbs: (id) => [
       { label: 'Catalog', to: '/student' },
       {
-        label: (
-          <CourseTitleCrumb endpoint={`/catalog/${id}`} queryKey={['catalog-detail', id]} />
-        ),
+        label: <CourseTitleCrumb endpoint={`/catalog/${id}`} queryKey={['catalog-detail', id]} />,
       },
     ],
   },

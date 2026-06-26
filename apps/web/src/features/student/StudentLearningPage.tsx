@@ -40,7 +40,7 @@ export function StudentLearningPage() {
       {enrollments && enrollments.length === 0 && (
         <Card>
           <p className="text-center text-ink/50">
-            You haven't enrolled in any courses yet.{' '}
+            You haven&apos;t enrolled in any courses yet.{' '}
             <Link to="/student" className="font-medium text-ribbon hover:underline">
               Browse the catalog
             </Link>

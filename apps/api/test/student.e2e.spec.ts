@@ -1,6 +1,13 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createTestApp, cleanupTestApp, makeUser, auth, type TestApp, type TestUser } from './helpers.js';
+import {
+  createTestApp,
+  cleanupTestApp,
+  makeUser,
+  auth,
+  type TestApp,
+  type TestUser,
+} from './helpers.js';
 
 /**
  * Integration test: a student enrolls in a published course, completes a
@@ -58,7 +65,10 @@ describe('Student enroll + completion flow', () => {
       .expect(201);
 
     // Initial progress is 0%.
-    const before = await request(server).get('/api/enrollments').set(auth(student.token)).expect(200);
+    const before = await request(server)
+      .get('/api/enrollments')
+      .set(auth(student.token))
+      .expect(200);
     const enrBefore = before.body.find((e: { course: { id: string } }) => e.course.id === courseId);
     expect(enrBefore.percentComplete).toBe(0);
     expect(enrBefore.totalLessons).toBe(2);
@@ -69,7 +79,10 @@ describe('Student enroll + completion flow', () => {
       .set(auth(student.token))
       .expect(201);
 
-    const after = await request(server).get('/api/enrollments').set(auth(student.token)).expect(200);
+    const after = await request(server)
+      .get('/api/enrollments')
+      .set(auth(student.token))
+      .expect(200);
     const enrAfter = after.body.find((e: { course: { id: string } }) => e.course.id === courseId);
     expect(enrAfter.completedCount).toBe(1);
     expect(enrAfter.percentComplete).toBe(50);
@@ -80,8 +93,14 @@ describe('Student enroll + completion flow', () => {
     const student = await makeUser(ctx, 'STUDENT');
 
     await request(server).post('/api/enrollments').set(auth(student.token)).send({ courseId });
-    await request(server).post(`/api/lessons/${lessonIds[0]}/complete`).set(auth(student.token)).expect(201);
-    await request(server).post(`/api/lessons/${lessonIds[0]}/complete`).set(auth(student.token)).expect(201);
+    await request(server)
+      .post(`/api/lessons/${lessonIds[0]}/complete`)
+      .set(auth(student.token))
+      .expect(201);
+    await request(server)
+      .post(`/api/lessons/${lessonIds[0]}/complete`)
+      .set(auth(student.token))
+      .expect(201);
 
     const res = await request(server).get('/api/enrollments').set(auth(student.token));
     const enr = res.body.find((e: { course: { id: string } }) => e.course.id === courseId);

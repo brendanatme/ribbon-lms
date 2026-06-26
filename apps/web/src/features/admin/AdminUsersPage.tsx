@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  Role,
-  UserStatus,
-  type PaginatedUsers,
-  type UserProfile,
-} from '@ribbon/shared';
+import { Role, UserStatus, type PaginatedUsers, type UserProfile } from '@ribbon/shared';
 import { api } from '../../lib/api.js';
 import { Badge, Card, PageHeading } from '../../components/ui.js';
 
@@ -67,7 +62,9 @@ export function AdminUsersPage() {
                 <td className="px-4 py-3">
                   <select
                     value={u.role}
-                    onChange={(e) => roleMutation.mutate({ id: u.id, role: e.target.value as Role })}
+                    onChange={(e) =>
+                      roleMutation.mutate({ id: u.id, role: e.target.value as Role })
+                    }
                     className="rounded-md border border-ink/15 px-2 py-1 text-sm focus:border-ribbon focus:outline-none"
                   >
                     {Object.values(Role).map((r) => (
@@ -82,7 +79,8 @@ export function AdminUsersPage() {
                     onClick={() =>
                       statusMutation.mutate({
                         id: u.id,
-                        status: u.status === UserStatus.ACTIVE ? UserStatus.DISABLED : UserStatus.ACTIVE,
+                        status:
+                          u.status === UserStatus.ACTIVE ? UserStatus.DISABLED : UserStatus.ACTIVE,
                       })
                     }
                     className="cursor-pointer"

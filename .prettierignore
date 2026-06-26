@@ -1,0 +1,14 @@
+# Build output & deps
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+.vite/
+
+# Generated / vendored
+pnpm-lock.yaml
+apps/api/prisma/migrations/
+
+# Non-source assets handled elsewhere
+*.md

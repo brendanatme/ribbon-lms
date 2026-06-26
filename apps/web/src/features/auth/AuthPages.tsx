@@ -5,7 +5,15 @@ import { useAuth } from '../../lib/auth.js';
 import { ApiError } from '../../lib/api.js';
 import { Button, Card } from '../../components/ui.js';
 
-function AuthShell({ children, title, subtitle }: { children: React.ReactNode; title: string; subtitle: string }) {
+function AuthShell({
+  children,
+  title,
+  subtitle,
+}: {
+  children: React.ReactNode;
+  title: string;
+  subtitle: string;
+}) {
   return (
     <div className="grid min-h-screen place-items-center px-4">
       <div className="w-full max-w-sm">
@@ -20,7 +28,10 @@ function AuthShell({ children, title, subtitle }: { children: React.ReactNode; t
   );
 }
 
-function Field({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({
+  label,
+  ...props
+}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-ink/70">{label}</span>
@@ -62,7 +73,13 @@ export function LoginPage() {
     <AuthShell title="Welcome back" subtitle="Sign in to continue learning">
       <form onSubmit={onSubmit} className="space-y-4">
         <Field label="Email" name="email" type="email" required autoComplete="email" />
-        <Field label="Password" name="password" type="password" required autoComplete="current-password" />
+        <Field
+          label="Password"
+          name="password"
+          type="password"
+          required
+          autoComplete="current-password"
+        />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? 'Signing in…' : 'Sign in'}
@@ -110,7 +127,14 @@ export function SignupPage() {
       <form onSubmit={onSubmit} className="space-y-4">
         <Field label="Name" name="name" type="text" required autoComplete="name" />
         <Field label="Email" name="email" type="email" required autoComplete="email" />
-        <Field label="Password" name="password" type="password" required minLength={8} autoComplete="new-password" />
+        <Field
+          label="Password"
+          name="password"
+          type="password"
+          required
+          minLength={8}
+          autoComplete="new-password"
+        />
         {error && <p className="text-sm text-red-600">{error}</p>}
         <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? 'Creating…' : 'Create account'}

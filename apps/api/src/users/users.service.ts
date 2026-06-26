@@ -41,7 +41,11 @@ export class UsersService {
       this.prisma.user.count({ where }),
     ]);
 
-    return paginated(items.map((u) => this.toProfile(u)), total, query);
+    return paginated(
+      items.map((u) => this.toProfile(u)),
+      total,
+      query,
+    );
   }
 
   async updateRole(id: string, role: Role) {

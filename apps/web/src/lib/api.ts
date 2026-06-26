@@ -36,22 +36,14 @@ async function request<T>(method: HttpMethod, path: string, body?: unknown): Pro
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new ApiError(
-      res.status,
-      data.message ?? 'Request failed',
-      data.code,
-      data.issues,
-    );
+    throw new ApiError(res.status, data.message ?? 'Request failed', data.code, data.issues);
   }
   return data as T;
 }
 
 export const api = {
   get: <T = unknown>(path: string): Promise<T> => request<T>('GET', path),
-  post: <T = unknown>(path: string, body?: unknown): Promise<T> =>
-    request<T>('POST', path, body),
-  patch: <T = unknown>(path: string, body?: unknown): Promise<T> =>
-    request<T>('PATCH', path, body),
-  del: <T = unknown>(path: string, body?: unknown): Promise<T> =>
-    request<T>('DELETE', path, body),
+  post: <T = unknown>(path: string, body?: unknown): Promise<T> => request<T>('POST', path, body),
+  patch: <T = unknown>(path: string, body?: unknown): Promise<T> => request<T>('PATCH', path, body),
+  del: <T = unknown>(path: string, body?: unknown): Promise<T> => request<T>('DELETE', path, body),
 };

@@ -21,14 +21,10 @@ export function StudentCoursePlayerPage() {
   });
 
   const progress = enrollments?.find((e) => e.course.id === id);
-  const completed = useMemo(
-    () => new Set(progress?.completedLessonIds ?? []),
-    [progress],
-  );
+  const completed = useMemo(() => new Set(progress?.completedLessonIds ?? []), [progress]);
 
   const completeMutation = useMutation({
-    mutationFn: (lessonId: string) =>
-      api.post(`/lessons/${lessonId}/complete`),
+    mutationFn: (lessonId: string) => api.post(`/lessons/${lessonId}/complete`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-progress'] }),
   });
 
@@ -64,7 +60,9 @@ export function StudentCoursePlayerPage() {
                     <button
                       onClick={() => setActiveLessonId(lesson.id)}
                       className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm ${
-                        activeLesson?.id === lesson.id ? 'bg-ribbon-light text-ribbon' : 'hover:bg-sand'
+                        activeLesson?.id === lesson.id
+                          ? 'bg-ribbon-light text-ribbon'
+                          : 'hover:bg-sand'
                       }`}
                     >
                       <span
