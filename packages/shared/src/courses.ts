@@ -15,6 +15,9 @@ export const createModuleSchema = z.object({
 });
 export type CreateModuleInput = z.infer<typeof createModuleSchema>;
 
+export const updateModuleSchema = createModuleSchema.partial();
+export type UpdateModuleInput = z.infer<typeof updateModuleSchema>;
+
 export const createLessonSchema = z.object({
   title: z.string().min(2).max(120),
   content: z.string().max(20000).default(''),
@@ -23,6 +26,9 @@ export const createLessonSchema = z.object({
 });
 export type CreateLessonInput = z.infer<typeof createLessonSchema>;
 
+export const updateLessonSchema = createLessonSchema.partial();
+export type UpdateLessonInput = z.infer<typeof updateLessonSchema>;
+
 export const lessonSchema = z.object({
   id: z.string(),
   moduleId: z.string(),
@@ -30,6 +36,7 @@ export const lessonSchema = z.object({
   content: z.string(),
   order: z.number(),
   durationMin: z.number(),
+  hasQuiz: z.boolean().default(false),
 });
 export type Lesson = z.infer<typeof lessonSchema>;
 

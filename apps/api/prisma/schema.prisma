@@ -18,6 +18,13 @@ enum UserStatus {
   DISABLED
 }
 
+enum QuestionType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  TEXT
+  NUMBER
+}
+
 model User {
   id           String     @id @default(cuid())
   email        String     @unique
@@ -27,8 +34,9 @@ model User {
   status       UserStatus @default(ACTIVE)
   createdAt    DateTime   @default(now())
 
-  courses     Course[]     @relation("TeacherCourses")
-  enrollments Enrollment[]
+  courses      Course[]      @relation("TeacherCourses")
+  enrollments  Enrollment[]
+  quizAttempts QuizAttempt[]
 }
 
 model Course {
@@ -68,6 +76,7 @@ model Lesson {
   durationMin Int    @default(5)
 
   progress LessonProgress[]
+  quiz     Quiz?
 
   @@index([moduleId])
 }
@@ -96,4 +105,77 @@ model LessonProgress {
 
   @@unique([enrollmentId, lessonId])
   @@index([lessonId])
+}
+
+model Quiz {
+  id       String @id @default(cuid())
+  lessonId String @unique
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  title    String @default("")
+
+  questions Question[]
+  attempts  QuizAttempt[]
+}
+
+model Question {
+  id     String       @id @default(cuid())
+  quizId String
+  quiz   Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  type   QuestionType
+  prompt String
+  order  Int          @default(0)
+  points Int          @default(1)
+
+  // Correct-answer config, by type. Choice types use `options.isCorrect`;
+  // TEXT/NUMBER use the scalar fields below.
+  options       QuestionOption[]
+  correctText   String?
+  correctNumber Float?
+
+  answers AttemptAnswer[]
+
+  @@index([quizId])
+}
+
+model QuestionOption {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  order      Int      @default(0)
+
+  @@index([questionId])
+}
+
+model QuizAttempt {
+  id             String   @id @default(cuid())
+  quizId         String
+  quiz           Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  score          Int // percent 0-100
+  pointsEarned   Int
+  pointsPossible Int
+  submittedAt    DateTime @default(now())
+
+  answers AttemptAnswer[]
+
+  @@index([quizId])
+  @@index([studentId])
+}
+
+model AttemptAnswer {
+  id                String   @id @default(cuid())
+  attemptId         String
+  attempt           QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId        String
+  question          Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOptionIds String[] // choice types
+  textValue         String?
+  numberValue       Float?
+  isCorrect         Boolean
+
+  @@index([attemptId])
+  @@index([questionId])
 }

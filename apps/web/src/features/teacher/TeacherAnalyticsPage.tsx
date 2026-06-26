@@ -27,10 +27,11 @@ export function TeacherAnalyticsPage() {
     <div>
       <PageHeading title={data.title} subtitle="Course analytics" />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Kpi label="Enrollments" value={String(data.enrollmentCount)} />
         <Kpi label="Completion rate" value={`${data.completionRate}%`} />
         <Kpi label="Avg progress" value={`${data.averageProgress}%`} />
+        <Kpi label="Avg quiz score" value={`${data.averageQuizScore}%`} />
       </div>
 
       <Card>
@@ -56,6 +57,28 @@ export function TeacherAnalyticsPage() {
           </ResponsiveContainer>
         )}
       </Card>
+
+      {data.quizStats.length > 0 && (
+        <Card className="mt-6">
+          <h3 className="mb-4 font-display text-lg font-semibold">Average quiz score</h3>
+          <ResponsiveContainer width="100%" height={280}>
+            <BarChart data={data.quizStats}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-chart-grid)" />
+              <XAxis
+                dataKey="title"
+                tick={{ fontSize: 11 }}
+                interval={0}
+                angle={-15}
+                textAnchor="end"
+                height={60}
+              />
+              <YAxis domain={[0, 100]} tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Bar dataKey="averageScore" fill="var(--color-ribbon)" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Card>
+      )}
     </div>
   );
 }

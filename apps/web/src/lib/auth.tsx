@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { AuthResponse, LoginInput, SignupInput, UserProfile } from '@ribbon/shared';
-import { api, setAccessToken } from './api';
+import { api, setAccessToken, setUnauthorizedHandler } from './api';
 
 interface AuthContextValue {
   user: UserProfile | null;
@@ -32,6 +32,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setAccessToken(null);
       })
       .finally(() => setLoading(false));
+  }, []);
+
+  // A 401 on any authenticated request means the token expired or is invalid:
+  // clear the session so the route guards send the user back to login.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      sessionStorage.removeItem('ribbon_token');
+      setAccessToken(null);
+      setUser(null);
+    });
+    return () => setUnauthorizedHandler(null);
   }, []);
 
   function applyAuth(res: AuthResponse) {

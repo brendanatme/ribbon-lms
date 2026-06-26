@@ -3,7 +3,10 @@ import { z } from 'zod';
 const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string().min(16),
-  JWT_EXPIRES_IN: z.string().default('15m'),
+  // Access-token lifetime. This is the whole session (there is no refresh
+  // token), so it must comfortably outlast a content-authoring session; a short
+  // value logs teachers out mid-edit. Override per-environment as needed.
+  JWT_EXPIRES_IN: z.string().default('12h'),
   PORT: z.coerce.number().default(3001),
   WEB_ORIGIN: z.string().url().default('http://localhost:5174'),
 });
