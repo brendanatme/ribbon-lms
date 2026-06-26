@@ -15,7 +15,7 @@ Signup is free; no payment is required.
 | Backend | NestJS, Prisma, PostgreSQL, JWT (Passport), argon2 |
 | Frontend | React, Vite, TanStack Query, React Router, Tailwind, Recharts |
 | Shared | Zod schemas + types consumed by both ends |
-| Tooling | pnpm workspaces, Vitest, TypeScript (strict) |
+| Tooling | pnpm workspaces, Vitest, TypeScript (strict), ESLint, Prettier, Husky |
 
 ## Layout
 
@@ -82,6 +82,26 @@ pnpm test
 ```
 
 API integration tests require a reachable `DATABASE_URL` (point it at a disposable test database). Frontend tests run against jsdom.
+
+## Linting & formatting
+
+ESLint and Prettier are configured once at the workspace root and shared across
+all three projects, so style is consistent end to end.
+
+```bash
+pnpm lint            # ESLint across the whole repo
+pnpm lint:fix        # ESLint with --fix
+pnpm format          # Prettier --write
+pnpm format:check    # Prettier --check (no writes)
+
+pnpm --filter @ribbon/web lint   # lint / format a single project
+```
+
+A Husky pre-commit hook runs `lint-staged` on every commit: staged files are
+auto-fixed with ESLint and formatted with Prettier, and a commit is rejected if
+an unfixable lint error remains. The hook is installed automatically by
+`pnpm install`, but **requires Node 20** to run — activate it (`nvm use 20`)
+before committing.
 
 ## Architecture notes
 
