@@ -10,3 +10,6 @@ coverage/
 .vite/
 apps/api/prisma/*.db
 apps/web/dist/
+
+# Personal, per-developer Claude Code settings (keep .claude/settings.json shared)
+.claude/settings.local.json
