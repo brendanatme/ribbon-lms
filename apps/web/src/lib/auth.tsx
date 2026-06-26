@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setAccessToken(saved);
-    api<UserProfile>('/auth/me')
+    api.get<UserProfile>('/auth/me')
       .then(setUser)
       .catch(() => {
         sessionStorage.removeItem('ribbon_token');
@@ -44,8 +44,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       user,
       loading,
-      login: async (input) => applyAuth(await api<AuthResponse>('/auth/login', { method: 'POST', body: input })),
-      signup: async (input) => applyAuth(await api<AuthResponse>('/auth/signup', { method: 'POST', body: input })),
+      login: async (input) => applyAuth(await api.post<AuthResponse>('/auth/login', input)),
+      signup: async (input) => applyAuth(await api.post<AuthResponse>('/auth/signup', input)),
       logout: () => {
         setAccessToken(null);
         sessionStorage.removeItem('ribbon_token');

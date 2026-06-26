@@ -11,12 +11,12 @@ export function TeacherCoursesPage() {
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['teacher-courses'],
-    queryFn: () => api<Course[]>('/teacher/courses'),
+    queryFn: () => api.get<Course[]>('/teacher/courses'),
   });
 
   const createMutation = useMutation({
     mutationFn: (input: CreateCourseInput) =>
-      api<Course>('/courses', { method: 'POST', body: input }),
+      api.post<Course>('/courses', input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['teacher-courses'] });
       setCreating(false);

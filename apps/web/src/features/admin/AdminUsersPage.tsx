@@ -16,18 +16,18 @@ export function AdminUsersPage() {
   const { data, isLoading } = useQuery({
     queryKey: ['users', search],
     queryFn: () =>
-      api<PaginatedUsers>(`/users?search=${encodeURIComponent(search)}&pageSize=50`),
+      api.get<PaginatedUsers>(`/users?search=${encodeURIComponent(search)}&pageSize=50`),
   });
 
   const roleMutation = useMutation({
     mutationFn: ({ id, role }: { id: string; role: Role }) =>
-      api<UserProfile>(`/users/${id}/role`, { method: 'PATCH', body: { role } }),
+      api.patch<UserProfile>(`/users/${id}/role`, { role }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   });
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: UserStatus }) =>
-      api<UserProfile>(`/users/${id}/status`, { method: 'PATCH', body: { status } }),
+      api.patch<UserProfile>(`/users/${id}/status`, { status }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['users'] }),
   });
 

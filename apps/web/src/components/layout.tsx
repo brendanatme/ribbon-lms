@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { ROLE_HOME_PATH, type Role } from '@ribbon/shared';
 import { useAuth } from '../lib/auth.js';
 import { Button } from './ui.js';
+import { Breadcrumbs } from './Breadcrumbs.js';
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
@@ -75,6 +76,7 @@ export function DashboardShell() {
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-6 py-8">
+        <Breadcrumbs />
         <Outlet />
       </main>
     </div>

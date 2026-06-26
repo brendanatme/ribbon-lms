@@ -12,19 +12,19 @@ export function StudentCatalogPage() {
 
   const { data: courses, isLoading } = useQuery({
     queryKey: ['catalog'],
-    queryFn: () => api<CatalogCourse[]>('/catalog'),
+    queryFn: () => api.get<CatalogCourse[]>('/catalog'),
   });
 
   const { data: enrollments } = useQuery({
     queryKey: ['my-progress'],
-    queryFn: () => api<EnrollmentProgress[]>('/enrollments'),
+    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
   });
 
   const enrolledIds = new Set(enrollments?.map((e) => e.course.id));
 
   const enrollMutation = useMutation({
     mutationFn: (courseId: string) =>
-      api('/enrollments', { method: 'POST', body: { courseId } }),
+      api.post('/enrollments', { courseId }),
     onSuccess: (_data, courseId) => {
       queryClient.invalidateQueries({ queryKey: ['my-progress'] });
       navigate(`/student/courses/${courseId}`);

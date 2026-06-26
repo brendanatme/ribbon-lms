@@ -12,12 +12,12 @@ export function StudentCoursePlayerPage() {
 
   const { data: course } = useQuery({
     queryKey: ['catalog-detail', id],
-    queryFn: () => api<CourseDetail>(`/catalog/${id}`),
+    queryFn: () => api.get<CourseDetail>(`/catalog/${id}`),
   });
 
   const { data: enrollments } = useQuery({
     queryKey: ['my-progress'],
-    queryFn: () => api<EnrollmentProgress[]>('/enrollments'),
+    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
   });
 
   const progress = enrollments?.find((e) => e.course.id === id);
@@ -28,7 +28,7 @@ export function StudentCoursePlayerPage() {
 
   const completeMutation = useMutation({
     mutationFn: (lessonId: string) =>
-      api(`/lessons/${lessonId}/complete`, { method: 'POST' }),
+      api.post(`/lessons/${lessonId}/complete`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-progress'] }),
   });
 

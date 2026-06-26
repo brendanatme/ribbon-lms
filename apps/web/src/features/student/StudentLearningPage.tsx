@@ -7,7 +7,7 @@ import { Button, Card, PageHeading, ProgressBar } from '../../components/ui.js';
 export function StudentLearningPage() {
   const { data: enrollments, isLoading } = useQuery({
     queryKey: ['my-progress'],
-    queryFn: () => api<EnrollmentProgress[]>('/enrollments'),
+    queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
   });
 
   return (

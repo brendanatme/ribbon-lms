@@ -17,24 +17,24 @@ export function TeacherCourseEditorPage() {
 
   const { data: course, isLoading } = useQuery({
     queryKey: ['course-edit', id],
-    queryFn: () => api<CourseDetail>(`/courses/${id}`),
+    queryFn: () => api.get<CourseDetail>(`/courses/${id}`),
   });
 
   const publishMutation = useMutation({
     mutationFn: (publish: boolean) =>
-      api<Course>(`/courses/${id}/${publish ? 'publish' : 'unpublish'}`, { method: 'PATCH' }),
+      api.patch<Course>(`/courses/${id}/${publish ? 'publish' : 'unpublish'}`),
     onSuccess: invalidate,
   });
 
   const addModuleMutation = useMutation({
     mutationFn: (input: CreateModuleInput) =>
-      api<Module>(`/courses/${id}/modules`, { method: 'POST', body: input }),
+      api.post<Module>(`/courses/${id}/modules`, input),
     onSuccess: invalidate,
   });
 
   const addLessonMutation = useMutation({
     mutationFn: ({ moduleId, input }: { moduleId: string; input: CreateLessonInput }) =>
-      api(`/modules/${moduleId}/lessons`, { method: 'POST', body: input }),
+      api.post(`/modules/${moduleId}/lessons`, input),
     onSuccess: invalidate,
   });
 

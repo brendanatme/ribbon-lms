@@ -18,7 +18,7 @@ export function TeacherAnalyticsPage() {
   const { id = '' } = useParams();
   const { data, isLoading } = useQuery({
     queryKey: ['analytics', id],
-    queryFn: () => api<CourseAnalytics>(`/analytics/courses/${id}`),
+    queryFn: () => api.get<CourseAnalytics>(`/analytics/courses/${id}`),
   });
 
   if (isLoading || !data) return <p className="text-ink/40">Loading analytics…</p>;

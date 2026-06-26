@@ -19,20 +19,17 @@ export function getAccessToken() {
   return accessToken;
 }
 
-interface RequestOptions {
-  method?: string;
-  body?: unknown;
-}
+type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
 
-export async function api<T>(path: string, options: RequestOptions = {}): Promise<T> {
+async function request<T>(method: HttpMethod, path: string, body?: unknown): Promise<T> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
   const res = await fetch(`/api${path}`, {
-    method: options.method ?? 'GET',
+    method,
     headers,
     credentials: 'include',
-    body: options.body ? JSON.stringify(options.body) : undefined,
+    body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
   if (res.status === 204) return undefined as T;
@@ -48,3 +45,13 @@ export async function api<T>(path: string, options: RequestOptions = {}): Promis
   }
   return data as T;
 }
+
+export const api = {
+  get: <T = unknown>(path: string): Promise<T> => request<T>('GET', path),
+  post: <T = unknown>(path: string, body?: unknown): Promise<T> =>
+    request<T>('POST', path, body),
+  patch: <T = unknown>(path: string, body?: unknown): Promise<T> =>
+    request<T>('PATCH', path, body),
+  del: <T = unknown>(path: string, body?: unknown): Promise<T> =>
+    request<T>('DELETE', path, body),
+};
