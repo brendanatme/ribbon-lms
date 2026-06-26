@@ -1,7 +1,9 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { CourseDetail, EnrollmentProgress } from '@ribbon/shared';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CoursesService } from '@/courses/courses.service';
+import { conflict, notFound } from '@/common/exceptions';
+import { toCourse } from '@/common/mappers/course.mapper';
 
 @Injectable()
 export class EnrollmentsService {
@@ -10,44 +12,37 @@ export class EnrollmentsService {
     private readonly courses: CoursesService,
   ) {}
 
+  /** Loads a published course or throws 404 — the catalog gate for students. */
+  private async getPublishedCourseOrThrow(courseId: string) {
+    const course = await this.prisma.course.findFirst({
+      where: { id: courseId, published: true },
+    });
+    if (!course) throw notFound('Course not available');
+    return course;
+  }
+
   async catalog() {
     const rows = await this.prisma.course.findMany({
       where: { published: true },
       include: { teacher: true, _count: { select: { enrollments: true } } },
       orderBy: { createdAt: 'desc' },
     });
-    return rows.map((c) => ({
-      id: c.id,
-      title: c.title,
-      description: c.description,
-      teacherId: c.teacherId,
-      teacherName: c.teacher.name,
-      published: c.published,
-      createdAt: c.createdAt.toISOString(),
-      enrollmentCount: c._count.enrollments,
-    }));
+    return rows.map((c) => ({ ...toCourse(c), enrollmentCount: c._count.enrollments }));
   }
 
   async catalogDetail(courseId: string): Promise<CourseDetail> {
-    const course = await this.prisma.course.findFirst({
-      where: { id: courseId, published: true },
-    });
-    if (!course) throw new NotFoundException({ message: 'Course not found', code: 'NOT_FOUND' });
+    await this.getPublishedCourseOrThrow(courseId);
     return this.courses.detail(courseId);
   }
 
   async enroll(studentId: string, courseId: string) {
-    const course = await this.prisma.course.findFirst({
-      where: { id: courseId, published: true },
-    });
-    if (!course)
-      throw new NotFoundException({ message: 'Course not available', code: 'NOT_FOUND' });
+    await this.getPublishedCourseOrThrow(courseId);
 
     const existing = await this.prisma.enrollment.findUnique({
       where: { studentId_courseId: { studentId, courseId } },
     });
     if (existing) {
-      throw new ConflictException({ message: 'Already enrolled', code: 'ALREADY_ENROLLED' });
+      throw conflict('Already enrolled', 'ALREADY_ENROLLED');
     }
     return this.prisma.enrollment.create({ data: { studentId, courseId } });
   }
@@ -57,13 +52,13 @@ export class EnrollmentsService {
       where: { id: lessonId },
       include: { module: true },
     });
-    if (!lesson) throw new NotFoundException({ message: 'Lesson not found', code: 'NOT_FOUND' });
+    if (!lesson) throw notFound('Lesson not found');
 
     const enrollment = await this.prisma.enrollment.findUnique({
       where: { studentId_courseId: { studentId, courseId: lesson.module.courseId } },
     });
     if (!enrollment) {
-      throw new NotFoundException({ message: 'Not enrolled in this course', code: 'NOT_ENROLLED' });
+      throw notFound('Not enrolled in this course', 'NOT_ENROLLED');
     }
 
     await this.prisma.lessonProgress.upsert({
@@ -94,15 +89,7 @@ export class EnrollmentsService {
       const completedCount = completedLessonIds.length;
       return {
         enrollmentId: e.id,
-        course: {
-          id: e.course.id,
-          title: e.course.title,
-          description: e.course.description,
-          teacherId: e.course.teacherId,
-          teacherName: e.course.teacher.name,
-          published: e.course.published,
-          createdAt: e.course.createdAt.toISOString(),
-        },
+        course: toCourse(e.course),
         completedLessonIds,
         totalLessons,
         completedCount,

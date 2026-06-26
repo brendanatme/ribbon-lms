@@ -1,9 +1,8 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Role, createEnrollmentSchema } from '@ribbon/shared';
 import type { CreateEnrollmentInput } from '@ribbon/shared';
 import { EnrollmentsService } from './enrollments.service';
 import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators';
-import { RolesGuard } from '@/common/guards/roles.guard';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
 @Controller()
@@ -22,7 +21,6 @@ export class EnrollmentsController {
   }
 
   @Post('enrollments')
-  @UseGuards(RolesGuard)
   @Roles(Role.STUDENT)
   enroll(
     @CurrentUser() user: AuthUser,
@@ -32,14 +30,12 @@ export class EnrollmentsController {
   }
 
   @Get('enrollments')
-  @UseGuards(RolesGuard)
   @Roles(Role.STUDENT)
   myProgress(@CurrentUser() user: AuthUser) {
     return this.enrollments.myProgress(user.id);
   }
 
   @Post('lessons/:id/complete')
-  @UseGuards(RolesGuard)
   @Roles(Role.STUDENT)
   complete(@CurrentUser() user: AuthUser, @Param('id') lessonId: string) {
     return this.enrollments.completeLesson(user.id, lessonId);

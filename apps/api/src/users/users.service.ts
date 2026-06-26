@@ -1,23 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import type { ListUsersQuery, PaginatedUsers, Role, UserStatus } from '@ribbon/shared';
-import type { Prisma, User } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import { paginated, toSkipTake } from '@/common/pagination';
+import { toUserProfile } from '@/common/mappers/user.mapper';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
-
-  private toProfile(user: User) {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      status: user.status,
-      createdAt: user.createdAt.toISOString(),
-    };
-  }
 
   async list(query: ListUsersQuery): Promise<PaginatedUsers> {
     const where: Prisma.UserWhereInput = {
@@ -41,20 +31,16 @@ export class UsersService {
       this.prisma.user.count({ where }),
     ]);
 
-    return paginated(
-      items.map((u) => this.toProfile(u)),
-      total,
-      query,
-    );
+    return paginated(items.map(toUserProfile), total, query);
   }
 
   async updateRole(id: string, role: Role) {
     const user = await this.prisma.user.update({ where: { id }, data: { role } });
-    return this.toProfile(user);
+    return toUserProfile(user);
   }
 
   async updateStatus(id: string, status: UserStatus) {
     const user = await this.prisma.user.update({ where: { id }, data: { status } });
-    return this.toProfile(user);
+    return toUserProfile(user);
   }
 }

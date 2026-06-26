@@ -1,6 +1,7 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { CourseAnalytics } from '@ribbon/shared';
 import { PrismaService } from '@/prisma/prisma.service';
+import { forbidden, notFound } from '@/common/exceptions';
 
 @Injectable()
 export class AnalyticsService {
@@ -14,22 +15,26 @@ export class AnalyticsService {
         enrollments: { include: { progress: { select: { lessonId: true } } } },
       },
     });
-    if (!course) throw new NotFoundException({ message: 'Course not found', code: 'NOT_FOUND' });
-    if (course.teacherId !== teacherId) {
-      throw new ForbiddenException({ message: 'Not your course', code: 'FORBIDDEN' });
-    }
+    if (!course) throw notFound('Course not found');
+    if (course.teacherId !== teacherId) throw forbidden('Not your course');
 
     const lessons = course.modules.flatMap((m) => m.lessons);
     const totalLessons = lessons.length;
     const enrollmentCount = course.enrollments.length;
 
-    // Per-lesson completion counts across all enrollments.
-    const lessonCompletion = lessons.map((lesson) => {
-      const completedCount = course.enrollments.filter((e) =>
-        e.progress.some((p) => p.lessonId === lesson.id),
-      ).length;
-      return { lessonId: lesson.id, title: lesson.title, completedCount };
-    });
+    // Tally completions per lesson in a single pass over all progress rows.
+    // (Progress is unique per enrollment+lesson, so a row count is a learner count.)
+    const completionByLesson = new Map<string, number>();
+    for (const e of course.enrollments) {
+      for (const p of e.progress) {
+        completionByLesson.set(p.lessonId, (completionByLesson.get(p.lessonId) ?? 0) + 1);
+      }
+    }
+    const lessonCompletion = lessons.map((lesson) => ({
+      lessonId: lesson.id,
+      title: lesson.title,
+      completedCount: completionByLesson.get(lesson.id) ?? 0,
+    }));
 
     // Average progress across enrolled students, and fully-completed rate.
     let progressSum = 0;

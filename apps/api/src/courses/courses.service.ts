@@ -1,38 +1,24 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type {
-  Course,
   CourseDetail,
   CreateCourseInput,
   CreateLessonInput,
   CreateModuleInput,
   UpdateCourseInput,
 } from '@ribbon/shared';
-import type { Course as PrismaCourse } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
+import { forbidden, notFound } from '@/common/exceptions';
+import { toCourse } from '@/common/mappers/course.mapper';
 
 @Injectable()
 export class CoursesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private toCourse(c: PrismaCourse & { teacher?: { name: string } }): Course {
-    return {
-      id: c.id,
-      title: c.title,
-      description: c.description,
-      teacherId: c.teacherId,
-      teacherName: c.teacher?.name,
-      published: c.published,
-      createdAt: c.createdAt.toISOString(),
-    };
-  }
-
   /** Throws if the course does not exist or is not owned by the teacher. */
-  private async assertOwner(courseId: string, teacherId: string) {
+  async assertOwner(courseId: string, teacherId: string) {
     const course = await this.prisma.course.findUnique({ where: { id: courseId } });
-    if (!course) throw new NotFoundException({ message: 'Course not found', code: 'NOT_FOUND' });
-    if (course.teacherId !== teacherId) {
-      throw new ForbiddenException({ message: 'Not your course', code: 'FORBIDDEN' });
-    }
+    if (!course) throw notFound('Course not found');
+    if (course.teacherId !== teacherId) throw forbidden('Not your course');
     return course;
   }
 
@@ -41,27 +27,28 @@ export class CoursesService {
       where: { id: moduleId },
       include: { course: true },
     });
-    if (!mod) throw new NotFoundException({ message: 'Module not found', code: 'NOT_FOUND' });
-    if (mod.course.teacherId !== teacherId) {
-      throw new ForbiddenException({ message: 'Not your course', code: 'FORBIDDEN' });
-    }
+    if (!mod) throw notFound('Module not found');
+    if (mod.course.teacherId !== teacherId) throw forbidden('Not your course');
     return mod;
   }
 
-  listForTeacher(teacherId: string) {
-    return this.prisma.course
-      .findMany({ where: { teacherId }, orderBy: { createdAt: 'desc' } })
-      .then((rows) => rows.map((c) => this.toCourse(c)));
+  async listForTeacher(teacherId: string) {
+    const rows = await this.prisma.course.findMany({
+      where: { teacherId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return rows.map(toCourse);
   }
 
-  create(teacherId: string, dto: CreateCourseInput) {
-    return this.prisma.course.create({ data: { ...dto, teacherId } }).then((c) => this.toCourse(c));
+  async create(teacherId: string, dto: CreateCourseInput) {
+    const course = await this.prisma.course.create({ data: { ...dto, teacherId } });
+    return toCourse(course);
   }
 
   async update(teacherId: string, courseId: string, dto: UpdateCourseInput) {
     await this.assertOwner(courseId, teacherId);
     const updated = await this.prisma.course.update({ where: { id: courseId }, data: dto });
-    return this.toCourse(updated);
+    return toCourse(updated);
   }
 
   async remove(teacherId: string, courseId: string) {
@@ -76,7 +63,7 @@ export class CoursesService {
       where: { id: courseId },
       data: { published },
     });
-    return this.toCourse(updated);
+    return toCourse(updated);
   }
 
   async addModule(teacherId: string, courseId: string, dto: CreateModuleInput) {
@@ -106,7 +93,7 @@ export class CoursesService {
         },
       },
     });
-    if (!course) throw new NotFoundException({ message: 'Course not found', code: 'NOT_FOUND' });
+    if (!course) throw notFound('Course not found');
 
     const modules = course.modules.map((m) => ({
       id: m.id,
@@ -124,7 +111,7 @@ export class CoursesService {
     }));
 
     return {
-      ...this.toCourse(course),
+      ...toCourse(course),
       modules,
       lessonCount: modules.reduce((sum, m) => sum + m.lessons.length, 0),
     };

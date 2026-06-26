@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import {
   Role,
   createCourseSchema,
@@ -14,11 +14,9 @@ import type {
 } from '@ribbon/shared';
 import { CoursesService } from './courses.service';
 import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators';
-import { RolesGuard } from '@/common/guards/roles.guard';
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
 @Controller()
-@UseGuards(RolesGuard)
 @Roles(Role.TEACHER)
 export class CoursesController {
   constructor(private readonly courses: CoursesService) {}

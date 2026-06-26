@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
@@ -10,8 +9,9 @@ async function bootstrap() {
   const config = app.get(ConfigService);
 
   app.setGlobalPrefix('api');
-  app.use(cookieParser());
   app.useGlobalFilters(new AllExceptionsFilter());
+  // credentials:true is required because the web app fetches with
+  // `credentials: 'include'`; auth itself rides the Authorization header.
   app.enableCors({
     origin: config.get<string>('WEB_ORIGIN', 'http://localhost:5174'),
     credentials: true,
