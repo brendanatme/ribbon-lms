@@ -49,12 +49,20 @@ pnpm build                         # pnpm -r build: shared → api + web
 ## Path aliases
 
 Both apps import intra-app modules via the `@/*` alias (→ each app's `src/*`)
-instead of deep relative paths, e.g. `import { api } from '@/lib/api.js'`. The
+instead of deep relative paths, e.g. `import { api } from '@/lib/api'`. The
 `@ribbon/shared` workspace alias is separate and unrelated. Convention: use
 `@/…` for anything that would otherwise traverse a parent dir (`../`); keep
-same-directory imports relative (`./helpers.js`).
+same-directory imports relative (`./helpers`).
 
-The alias is declared once per app as tsconfig `paths` (`baseUrl` + `"@/*"`),
+Module imports carry **no file extension**: the web app resolves them via Vite's
+bundler resolution and the API via SWC + CommonJS `require`, neither of which
+needs one. (Asset imports like `./index.css` keep their extension — those _are_
+resolved by suffix.) Caveat: this works because the API is CommonJS; if it ever
+moves to native ESM (`"type": "module"`), relative imports would then require
+explicit `.js` extensions.
+
+The alias is declared once per app as tsconfig `paths` (a `"@/*"` → `"./src/*"`
+mapping; no `baseUrl` — `paths` resolve relative to the tsconfig's own dir),
 then each resolver in that app's toolchain is taught the same mapping:
 
 - **Web** — `apps/web/vite.config.ts` adds the `vite-tsconfig-paths` plugin,
