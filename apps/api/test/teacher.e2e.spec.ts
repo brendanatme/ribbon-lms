@@ -7,7 +7,7 @@ import {
   auth,
   type TestApp,
   type TestUser,
-} from './helpers.js';
+} from './helpers';
 
 /**
  * Integration test: a teacher creates a course, adds a module + lesson,

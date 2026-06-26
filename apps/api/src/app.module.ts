@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { validateEnv } from './common/env.js';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard.js';
-import { PrismaModule } from './prisma/prisma.module.js';
-import { AuthModule } from './auth/auth.module.js';
-import { UsersModule } from './users/users.module.js';
-import { CoursesModule } from './courses/courses.module.js';
-import { EnrollmentsModule } from './enrollments/enrollments.module.js';
-import { AnalyticsModule } from './analytics/analytics.module.js';
+import { validateEnv } from './common/env';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CoursesModule } from './courses/courses.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [

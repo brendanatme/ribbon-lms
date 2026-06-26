@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import type { CourseDetail, EnrollmentProgress } from '@ribbon/shared';
-import { PrismaService } from '@/prisma/prisma.service.js';
-import { CoursesService } from '@/courses/courses.service.js';
+import { PrismaService } from '@/prisma/prisma.service';
+import { CoursesService } from '@/courses/courses.service';
 
 @Injectable()
 export class EnrollmentsService {

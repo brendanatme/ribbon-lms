@@ -1,8 +1,8 @@
 import { Controller, Get, Module, Param, UseGuards } from '@nestjs/common';
 import { Role } from '@ribbon/shared';
-import { AnalyticsService } from './analytics.service.js';
-import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators.js';
-import { RolesGuard } from '@/common/guards/roles.guard.js';
+import { AnalyticsService } from './analytics.service';
+import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators';
+import { RolesGuard } from '@/common/guards/roles.guard';
 
 @Controller('analytics')
 @UseGuards(RolesGuard)

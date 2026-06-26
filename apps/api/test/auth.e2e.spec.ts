@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { createTestApp, cleanupTestApp, auth, type TestApp } from './helpers.js';
+import { createTestApp, cleanupTestApp, auth, type TestApp } from './helpers';
 
 /**
  * Integration test: signup -> /auth/me happy path, plus RBAC negative cases.

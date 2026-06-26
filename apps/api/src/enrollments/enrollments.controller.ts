@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { Role, createEnrollmentSchema } from '@ribbon/shared';
 import type { CreateEnrollmentInput } from '@ribbon/shared';
-import { EnrollmentsService } from './enrollments.service.js';
-import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators.js';
-import { RolesGuard } from '@/common/guards/roles.guard.js';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe.js';
+import { EnrollmentsService } from './enrollments.service';
+import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
 @Controller()
 export class EnrollmentsController {

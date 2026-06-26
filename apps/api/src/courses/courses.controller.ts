@@ -12,10 +12,10 @@ import type {
   CreateModuleInput,
   UpdateCourseInput,
 } from '@ribbon/shared';
-import { CoursesService } from './courses.service.js';
-import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators.js';
-import { RolesGuard } from '@/common/guards/roles.guard.js';
-import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe.js';
+import { CoursesService } from './courses.service';
+import { Roles, CurrentUser, type AuthUser } from '@/common/decorators/auth.decorators';
+import { RolesGuard } from '@/common/guards/roles.guard';
+import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe';
 
 @Controller()
 @UseGuards(RolesGuard)

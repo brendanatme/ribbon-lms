@@ -7,7 +7,7 @@ import {
   auth,
   type TestApp,
   type TestUser,
-} from './helpers.js';
+} from './helpers';
 
 /**
  * Integration test: a student enrolls in a published course, completes a
