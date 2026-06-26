@@ -1,9 +1,9 @@
 import { Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
 import { ROLE_HOME_PATH, type Role } from '@ribbon/shared';
-import { useAuth } from '@/lib/auth.js';
-import { Button } from './ui.js';
-import { Breadcrumbs } from './Breadcrumbs.js';
+import { useAuth } from '@/lib/auth';
+import { Button } from './ui';
+import { Breadcrumbs } from './Breadcrumbs';
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { AuthResponse, LoginInput, SignupInput, UserProfile } from '@ribbon/shared';
-import { api, setAccessToken } from './api.js';
+import { api, setAccessToken } from './api';
 
 interface AuthContextValue {
   user: UserProfile | null;

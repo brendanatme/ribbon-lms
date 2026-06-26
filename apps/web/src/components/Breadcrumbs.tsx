@@ -2,7 +2,7 @@ import { Fragment, type ReactNode } from 'react';
 import { Link, matchPath, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import type { CourseDetail } from '@ribbon/shared';
-import { api } from '@/lib/api.js';
+import { api } from '@/lib/api';
 
 interface Crumb {
   label: ReactNode;

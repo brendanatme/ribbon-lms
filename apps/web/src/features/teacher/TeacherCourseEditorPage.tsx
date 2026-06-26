@@ -7,8 +7,8 @@ import type {
   CreateModuleInput,
   Module,
 } from '@ribbon/shared';
-import { api } from '@/lib/api.js';
-import { Button, Card, PageHeading } from '@/components/ui.js';
+import { api } from '@/lib/api';
+import { Button, Card, PageHeading } from '@/components/ui';
 
 export function TeacherCourseEditorPage() {
   const { id = '' } = useParams();

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Role, UserStatus, type PaginatedUsers, type UserProfile } from '@ribbon/shared';
-import { api } from '@/lib/api.js';
-import { Badge, Card, PageHeading } from '@/components/ui.js';
+import { api } from '@/lib/api';
+import { Badge, Card, PageHeading } from '@/components/ui';
 
 export function AdminUsersPage() {
   const queryClient = useQueryClient();

@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ROLE_HOME_PATH } from '@ribbon/shared';
-import { useAuth } from '@/lib/auth.js';
-import { ApiError } from '@/lib/api.js';
-import { Button, Card } from '@/components/ui.js';
+import { useAuth } from '@/lib/auth';
+import { ApiError } from '@/lib/api';
+import { Button, Card } from '@/components/ui';
 
 function AuthShell({
   children,

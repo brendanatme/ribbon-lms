@@ -1,15 +1,15 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 import { Role } from '@ribbon/shared';
-import { DashboardShell, RequireRole } from '@/components/layout.js';
-import { LoginPage, SignupPage } from '@/features/auth/AuthPages.js';
-import { AdminUsersPage } from '@/features/admin/AdminUsersPage.js';
-import { TeacherCoursesPage } from '@/features/teacher/TeacherCoursesPage.js';
-import { TeacherCourseEditorPage } from '@/features/teacher/TeacherCourseEditorPage.js';
-import { TeacherAnalyticsPage } from '@/features/teacher/TeacherAnalyticsPage.js';
-import { StudentCatalogPage } from '@/features/student/StudentCatalogPage.js';
-import { StudentCoursePlayerPage } from '@/features/student/StudentCoursePlayerPage.js';
-import { StudentLearningPage } from '@/features/student/StudentLearningPage.js';
-import { RootRedirect } from './RootRedirect.js';
+import { DashboardShell, RequireRole } from '@/components/layout';
+import { LoginPage, SignupPage } from '@/features/auth/AuthPages';
+import { AdminUsersPage } from '@/features/admin/AdminUsersPage';
+import { TeacherCoursesPage } from '@/features/teacher/TeacherCoursesPage';
+import { TeacherCourseEditorPage } from '@/features/teacher/TeacherCourseEditorPage';
+import { TeacherAnalyticsPage } from '@/features/teacher/TeacherAnalyticsPage';
+import { StudentCatalogPage } from '@/features/student/StudentCatalogPage';
+import { StudentCoursePlayerPage } from '@/features/student/StudentCoursePlayerPage';
+import { StudentLearningPage } from '@/features/student/StudentLearningPage';
+import { RootRedirect } from './RootRedirect';
 
 export const router: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   { path: '/', element: <RootRedirect /> },

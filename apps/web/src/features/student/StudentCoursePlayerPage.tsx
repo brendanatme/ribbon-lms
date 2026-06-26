@@ -2,8 +2,8 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { CourseDetail, EnrollmentProgress, Lesson } from '@ribbon/shared';
-import { api } from '@/lib/api.js';
-import { Button, Card, PageHeading, ProgressBar } from '@/components/ui.js';
+import { api } from '@/lib/api';
+import { Button, Card, PageHeading, ProgressBar } from '@/components/ui';
 
 export function StudentCoursePlayerPage() {
   const { id = '' } = useParams();
