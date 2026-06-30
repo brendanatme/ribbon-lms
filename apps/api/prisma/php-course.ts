@@ -10,28 +10,7 @@
  * target PHP 8.x semantics (e.g. saner `==`, `match`, named args).
  */
 
-export type SeedOption = { text: string; correct?: boolean };
-
-export type SeedQuestion =
-  | { type: 'SINGLE_CHOICE'; prompt: string; options: SeedOption[]; points?: number }
-  | { type: 'MULTIPLE_CHOICE'; prompt: string; options: SeedOption[]; points?: number }
-  | { type: 'TEXT'; prompt: string; answer: string; points?: number }
-  | { type: 'NUMBER'; prompt: string; answer: number; points?: number };
-
-export type SeedLesson = {
-  title: string;
-  durationMin: number;
-  content: string;
-  quiz?: { title: string; questions: SeedQuestion[] };
-};
-
-export type SeedModule = { title: string; lessons: SeedLesson[] };
-
-export type SeedCourse = {
-  title: string;
-  description: string;
-  modules: SeedModule[];
-};
+import type { SeedCourse } from './seed-types';
 
 export const phpCourse: SeedCourse = {
   title: 'PHP from Zero to Pro',

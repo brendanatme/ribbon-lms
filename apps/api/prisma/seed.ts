@@ -1,6 +1,8 @@
 import { PrismaClient, Prisma } from '@prisma/client';
 import * as argon2 from 'argon2';
-import { phpCourse, type SeedCourse, type SeedQuestion } from './php-course';
+import type { SeedCourse, SeedQuestion } from './seed-types';
+import { phpCourse } from './php-course';
+import { wordpressCourse } from './wordpress-course';
 
 const prisma = new PrismaClient();
 
@@ -261,6 +263,9 @@ async function main() {
 
   const php = await seedCourse(phpCourse, teacher.id);
   if (php) await seedDemoCohort(php.id, password);
+
+  const wordpress = await seedCourse(wordpressCourse, teacher.id);
+  if (wordpress) await seedDemoCohort(wordpress.id, password);
 
   console.log(`Seeded. Admin: ${admin.email} / Password123!`);
 }
