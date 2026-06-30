@@ -5,6 +5,7 @@ import type { Lesson } from '@ribbon/shared';
 import { api } from '@/lib/api';
 import { catalogDetailQuery, enrollmentsQuery } from '@/lib/queries';
 import { Button, Card, Loading, PageHeading, ProgressBar } from '@/components/ui';
+import { Markdown } from '@/components/Markdown';
 import { QuizPlayer } from './QuizPlayer';
 
 export function StudentCoursePlayerPage() {
@@ -83,9 +84,11 @@ export function StudentCoursePlayerPage() {
           {activeLesson ? (
             <article>
               <h2 className="mb-3 font-display text-2xl font-semibold">{activeLesson.title}</h2>
-              <p className="mb-6 whitespace-pre-wrap leading-relaxed text-ink/80">
-                {activeLesson.content || 'No content for this lesson yet.'}
-              </p>
+              {activeLesson.content ? (
+                <Markdown content={activeLesson.content} className="mb-6" />
+              ) : (
+                <p className="mb-6 text-ink/40">No content for this lesson yet.</p>
+              )}
               <Button
                 onClick={() => completeMutation.mutate(activeLesson.id)}
                 disabled={completed.has(activeLesson.id) || completeMutation.isPending}

@@ -23,3 +23,15 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Trim the outer margins the Markdown renderer adds, so authored content sits
+   flush inside cards and inline quiz prompts. */
+.prose-lesson > :first-child {
+  margin-top: 0;
+}
+.prose-lesson > :last-child {
+  margin-bottom: 0;
+}
+.prose-lesson--tight > :only-child {
+  margin: 0;
+}

@@ -1,7 +1,73 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import * as argon2 from 'argon2';
+import { phpCourse, type SeedCourse, type SeedQuestion } from './php-course';
 
 const prisma = new PrismaClient();
+
+/** Turns a flat SeedQuestion into the nested Prisma create shape. */
+function buildQuestion(q: SeedQuestion, order: number): Prisma.QuestionCreateWithoutQuizInput {
+  const base = { prompt: q.prompt, order, points: q.points ?? 1 };
+  switch (q.type) {
+    case 'SINGLE_CHOICE':
+    case 'MULTIPLE_CHOICE':
+      return {
+        ...base,
+        type: q.type,
+        options: {
+          create: q.options.map((o, i) => ({
+            text: o.text,
+            isCorrect: o.correct ?? false,
+            order: i,
+          })),
+        },
+      };
+    case 'TEXT':
+      return { ...base, type: 'TEXT', correctText: q.answer };
+    case 'NUMBER':
+      return { ...base, type: 'NUMBER', correctNumber: q.answer };
+  }
+}
+
+/** Seeds a whole SeedCourse (modules → lessons → quizzes) for a teacher. */
+async function seedCourse(course: SeedCourse, teacherId: string) {
+  const existing = await prisma.course.findFirst({ where: { title: course.title } });
+  if (existing) return;
+
+  await prisma.course.create({
+    data: {
+      title: course.title,
+      description: course.description,
+      teacherId,
+      published: true,
+      modules: {
+        create: course.modules.map((mod, mIdx) => ({
+          title: mod.title,
+          order: mIdx,
+          lessons: {
+            create: mod.lessons.map((lesson, lIdx) => ({
+              title: lesson.title,
+              content: lesson.content,
+              order: lIdx,
+              durationMin: lesson.durationMin,
+              ...(lesson.quiz
+                ? {
+                    quiz: {
+                      create: {
+                        title: lesson.quiz.title,
+                        questions: {
+                          create: lesson.quiz.questions.map((q, qIdx) => buildQuestion(q, qIdx)),
+                        },
+                      },
+                    },
+                  }
+                : {}),
+            })),
+          },
+        })),
+      },
+    },
+  });
+}
 
 async function main() {
   const password = await argon2.hash('Password123!');
@@ -131,6 +197,8 @@ async function main() {
       },
     });
   }
+
+  await seedCourse(phpCourse, teacher.id);
 
   console.log(`Seeded. Admin: ${admin.email} / Password123!`);
 }

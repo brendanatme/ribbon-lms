@@ -5,6 +5,7 @@ import type { AttemptResult, SubmitAttemptInput, QuizTake } from '@ribbon/shared
 import { api } from '@/lib/api';
 import { quizMyResultQuery, quizTakeQuery } from '@/lib/queries';
 import { Badge, Button, Card, Input, Loading } from '@/components/ui';
+import { MarkdownInline } from '@/components/Markdown';
 
 type AnswerState = { selectedOptionIds: string[]; textValue: string; numberValue: string };
 
@@ -79,16 +80,18 @@ export function QuizPlayer({ lessonId }: { lessonId: string }) {
           const graded = resultById.get(q.id);
           return (
             <li key={q.id}>
-              <p className="mb-2 font-medium">
-                <span className="text-ink/40">{i + 1}. </span>
-                {q.prompt}
+              <div className="mb-2 flex items-start gap-2 font-medium">
+                <span className="text-ink/40">{i + 1}.</span>
+                <div className="min-w-0 flex-1">
+                  <MarkdownInline content={q.prompt} />
+                </div>
                 {result &&
                   (graded ? (
-                    <span className="ml-2 text-sm text-ribbon">✓ correct</span>
+                    <span className="whitespace-nowrap text-sm text-ribbon">✓ correct</span>
                   ) : (
-                    <span className="ml-2 text-sm text-red-600">✗ incorrect</span>
+                    <span className="whitespace-nowrap text-sm text-red-600">✗ incorrect</span>
                   ))}
-              </p>
+              </div>
 
               {(q.type === QuestionType.SINGLE_CHOICE ||
                 q.type === QuestionType.MULTIPLE_CHOICE) && (
