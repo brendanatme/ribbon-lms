@@ -1,5 +1,6 @@
 import type {
   CourseDetail,
+  CourseResult,
   EnrollmentProgress,
   QuizAttemptSummary,
   QuizAuthor,
@@ -18,6 +19,11 @@ import { api } from './api';
 export const enrollmentsQuery = () => ({
   queryKey: ['my-progress'] as const,
   queryFn: () => api.get<EnrollmentProgress[]>('/enrollments'),
+});
+
+export const courseResultQuery = (courseId: string) => ({
+  queryKey: ['course-result', courseId] as const,
+  queryFn: () => api.get<CourseResult>(`/enrollments/${courseId}/result`),
 });
 
 export const courseEditQuery = (id: string) => ({

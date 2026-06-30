@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Lesson } from '@ribbon/shared';
@@ -7,6 +7,7 @@ import { catalogDetailQuery, enrollmentsQuery } from '@/lib/queries';
 import { Button, Card, Loading, PageHeading, ProgressBar } from '@/components/ui';
 import { Markdown } from '@/components/Markdown';
 import { QuizPlayer } from './QuizPlayer';
+import { CourseCompletionPanel } from './CourseCompletionPanel';
 
 export function StudentCoursePlayerPage() {
   const { id = '' } = useParams();
@@ -25,14 +26,37 @@ export function StudentCoursePlayerPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: enrollmentsQuery().queryKey }),
   });
 
+  // Fire the completion fanfare only on the transition into 100% (not on every
+  // revisit of an already-finished course).
+  const percent = progress?.percentComplete ?? 0;
+  const prevPercent = useRef(percent);
+  const [celebrateSeed, setCelebrateSeed] = useState(0);
+  useEffect(() => {
+    if (prevPercent.current < 100 && percent === 100) setCelebrateSeed((s) => s + 1);
+    prevPercent.current = percent;
+  }, [percent]);
+
   const lessons: Lesson[] = course?.modules.flatMap((m) => m.lessons) ?? [];
   const activeLesson = lessons.find((l) => l.id === activeLessonId) ?? lessons[0];
+  const activeIndex = lessons.findIndex((l) => l.id === activeLesson?.id);
+
+  function goTo(index: number) {
+    const next = lessons[index];
+    if (next) {
+      setActiveLessonId(next.id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
 
   if (!course) return <Loading>Loading course…</Loading>;
+
+  const isComplete = percent === 100;
 
   return (
     <div>
       <PageHeading title={course.title} subtitle={`by ${course.teacherName}`} />
+
+      {isComplete && <CourseCompletionPanel courseId={id} celebrateSeed={celebrateSeed} />}
 
       {progress && (
         <div className="mb-6">
@@ -98,6 +122,21 @@ export function StudentCoursePlayerPage() {
               {activeLesson.hasQuiz && (
                 <QuizPlayer key={activeLesson.id} lessonId={activeLesson.id} />
               )}
+
+              <div className="mt-8 flex items-center justify-between border-t border-ink/10 pt-4">
+                {activeIndex > 0 ? (
+                  <Button variant="ghost" onClick={() => goTo(activeIndex - 1)}>
+                    ← Previous
+                  </Button>
+                ) : (
+                  <span />
+                )}
+                {activeIndex < lessons.length - 1 ? (
+                  <Button onClick={() => goTo(activeIndex + 1)}>Next lesson →</Button>
+                ) : (
+                  <span className="text-sm text-ink/50">You&apos;ve reached the last lesson.</span>
+                )}
+              </div>
             </article>
           ) : (
             <p className="text-ink/40">This course has no lessons yet.</p>

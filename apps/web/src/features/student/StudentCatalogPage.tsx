@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Course } from '@ribbon/shared';
 import { api, ApiError } from '@/lib/api';
 import { enrollmentsQuery } from '@/lib/queries';
-import { Button, Card, EmptyState, Loading, PageHeading } from '@/components/ui';
+import { Badge, Button, Card, EmptyState, Loading, PageHeading } from '@/components/ui';
 
 type CatalogCourse = Course & { enrollmentCount: number };
 
@@ -19,6 +19,9 @@ export function StudentCatalogPage() {
   const { data: enrollments } = useQuery(enrollmentsQuery());
 
   const enrolledIds = new Set(enrollments?.map((e) => e.course.id));
+  const completedIds = new Set(
+    enrollments?.filter((e) => e.percentComplete === 100).map((e) => e.course.id),
+  );
 
   const enrollMutation = useMutation({
     mutationFn: (courseId: string) => api.post('/enrollments', { courseId }),
@@ -43,9 +46,13 @@ export function StudentCatalogPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {courses?.map((course) => {
           const enrolled = enrolledIds.has(course.id);
+          const isCompleted = completedIds.has(course.id);
           return (
             <Card key={course.id} className="flex flex-col">
-              <h3 className="font-display text-lg font-semibold">{course.title}</h3>
+              <div className="flex items-start justify-between gap-2">
+                <h3 className="font-display text-lg font-semibold">{course.title}</h3>
+                {isCompleted && <Badge tone="ribbon">✓ Completed</Badge>}
+              </div>
               <p className="mt-1 text-xs text-ink/50">by {course.teacherName}</p>
               <p className="mt-2 flex-1 text-sm text-ink/60">{course.description}</p>
               <p className="mt-3 text-xs text-ink/40">{course.enrollmentCount} enrolled</p>
@@ -56,7 +63,7 @@ export function StudentCatalogPage() {
                     onClick={() => navigate(`/student/courses/${course.id}`)}
                     className="w-full"
                   >
-                    Continue
+                    {isCompleted ? 'Review' : 'Continue'}
                   </Button>
                 ) : (
                   <Button onClick={() => enrollMutation.mutate(course.id)} className="w-full">

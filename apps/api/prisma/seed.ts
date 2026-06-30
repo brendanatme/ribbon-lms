@@ -31,9 +31,9 @@ function buildQuestion(q: SeedQuestion, order: number): Prisma.QuestionCreateWit
 /** Seeds a whole SeedCourse (modules → lessons → quizzes) for a teacher. */
 async function seedCourse(course: SeedCourse, teacherId: string) {
   const existing = await prisma.course.findFirst({ where: { title: course.title } });
-  if (existing) return;
+  if (existing) return null;
 
-  await prisma.course.create({
+  return prisma.course.create({
     data: {
       title: course.title,
       description: course.description,
@@ -67,6 +67,67 @@ async function seedCourse(course: SeedCourse, teacherId: string) {
       },
     },
   });
+}
+
+/**
+ * Seeds a cohort of peer students who have finished a course with a spread of
+ * quiz scores. This gives the course-completion screen real classmates to rank
+ * a learner against (otherwise everyone is "first to complete"). Only the
+ * `score` of each attempt matters to ranking, so attempts are created without
+ * per-question answer rows.
+ */
+async function seedDemoCohort(courseId: string, passwordHash: string) {
+  const peers = [
+    { email: 'priya@ribbon.dev', name: 'Priya Patel', base: 74 },
+    { email: 'marco@ribbon.dev', name: 'Marco Bianchi', base: 86 },
+    { email: 'lena@ribbon.dev', name: 'Lena Schmidt', base: 95 },
+  ];
+
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+    include: { modules: { include: { lessons: { include: { quiz: true } } } } },
+  });
+  if (!course) return;
+
+  const lessons = course.modules.flatMap((m) => m.lessons);
+  const quizzes = lessons.map((l) => l.quiz).filter((q): q is NonNullable<typeof q> => q != null);
+
+  for (const peer of peers) {
+    const user = await prisma.user.upsert({
+      where: { email: peer.email },
+      update: {},
+      create: { email: peer.email, name: peer.name, passwordHash, role: 'STUDENT' },
+    });
+
+    const enrollment = await prisma.enrollment.upsert({
+      where: { studentId_courseId: { studentId: user.id, courseId } },
+      update: {},
+      create: { studentId: user.id, courseId },
+    });
+
+    // Mark every lesson complete so the course reads as 100% for this peer.
+    for (const lesson of lessons) {
+      await prisma.lessonProgress.upsert({
+        where: { enrollmentId_lessonId: { enrollmentId: enrollment.id, lessonId: lesson.id } },
+        update: {},
+        create: { enrollmentId: enrollment.id, lessonId: lesson.id },
+      });
+    }
+
+    // One graded attempt per quiz, jittered around the peer's baseline.
+    for (const [qi, quiz] of quizzes.entries()) {
+      const score = Math.max(0, Math.min(100, peer.base + (((qi * 37) % 13) - 6)));
+      await prisma.quizAttempt.create({
+        data: {
+          quizId: quiz.id,
+          studentId: user.id,
+          score,
+          pointsEarned: Math.round(score / 10),
+          pointsPossible: 10,
+        },
+      });
+    }
+  }
 }
 
 async function main() {
@@ -198,7 +259,8 @@ async function main() {
     });
   }
 
-  await seedCourse(phpCourse, teacher.id);
+  const php = await seedCourse(phpCourse, teacher.id);
+  if (php) await seedDemoCohort(php.id, password);
 
   console.log(`Seeded. Admin: ${admin.email} / Password123!`);
 }

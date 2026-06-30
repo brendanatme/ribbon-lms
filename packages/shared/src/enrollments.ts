@@ -16,6 +16,24 @@ export const enrollmentProgressSchema = z.object({
 });
 export type EnrollmentProgress = z.infer<typeof enrollmentProgressSchema>;
 
+/**
+ * A student's final standing in a course, surfaced on the completion screen.
+ * `averageScore` is the mean of the student's best score on each quiz they
+ * attempted; ranking compares that against every other student who has
+ * attempted at least one quiz in the course.
+ */
+export const courseResultSchema = z.object({
+  courseId: z.string(),
+  title: z.string(),
+  averageScore: z.number(), // 0-100, mean of best quiz scores
+  quizzesTaken: z.number(),
+  totalQuizzes: z.number(),
+  cohortSize: z.number(), // students with a comparable score (incl. this one)
+  rank: z.number(), // 1-based; 1 = top of the cohort. 0 when not ranked.
+  percentile: z.number(), // 0-100: share of the cohort scored at or below this student
+});
+export type CourseResult = z.infer<typeof courseResultSchema>;
+
 export const courseAnalyticsSchema = z.object({
   courseId: z.string(),
   title: z.string(),

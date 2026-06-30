@@ -40,4 +40,10 @@ export class EnrollmentsController {
   complete(@CurrentUser() user: AuthUser, @Param('id') lessonId: string) {
     return this.enrollments.completeLesson(user.id, lessonId);
   }
+
+  @Get('enrollments/:courseId/result')
+  @Roles(Role.STUDENT)
+  courseResult(@CurrentUser() user: AuthUser, @Param('courseId') courseId: string) {
+    return this.enrollments.courseResult(user.id, courseId);
+  }
 }
